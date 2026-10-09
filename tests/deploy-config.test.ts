@@ -42,6 +42,88 @@ function readPngChunks(png: Buffer): { chunks: PngChunk[]; endOffset: number } {
   return { chunks, endOffset: offset };
 }
 
+const PNG_IHDR_DATA_LENGTH = 13;
+const PNG_FILTER_TYPE_MAX = 4;
+const PNG_CHANNELS_BY_COLOR_TYPE: Record<number, number> = {
+  0: 1,
+  2: 3,
+  3: 1,
+  4: 2,
+  6: 4,
+};
+const PNG_BIT_DEPTHS_BY_COLOR_TYPE: Record<number, number[]> = {
+  0: [1, 2, 4, 8, 16],
+  2: [8, 16],
+  3: [1, 2, 4, 8],
+  4: [8, 16],
+  6: [8, 16],
+};
+
+// Throws unless the file is a structurally valid, non-interlaced PNG of the expected size.
+function validatePng(png: Buffer, expectedSize: number): void {
+  const { chunks, endOffset } = readPngChunks(png);
+  if (endOffset !== png.length) throw new Error('Data after the last chunk');
+  const types = chunks.map((chunk) => chunk.type);
+
+  const ihdr = chunks[0];
+  if (ihdr?.type !== 'IHDR') throw new Error('First chunk is not IHDR');
+  if (ihdr.data.length !== PNG_IHDR_DATA_LENGTH) {
+    throw new Error(`IHDR has ${ihdr.data.length} data bytes, expected 13`);
+  }
+  const width = ihdr.data.readUInt32BE(0);
+  const height = ihdr.data.readUInt32BE(4);
+  const [bitDepth, colorType, compression, filter, interlace] = [
+    ihdr.data[8],
+    ihdr.data[9],
+    ihdr.data[10],
+    ihdr.data[11],
+    ihdr.data[12],
+  ];
+  if (width !== expectedSize || height !== expectedSize) {
+    throw new Error(`Size is ${width} x ${height}`);
+  }
+  if (!PNG_BIT_DEPTHS_BY_COLOR_TYPE[colorType]?.includes(bitDepth)) {
+    throw new Error(
+      `Invalid bit depth ${bitDepth} for color type ${colorType}`,
+    );
+  }
+  if (compression !== 0 || filter !== 0 || interlace !== 0) {
+    throw new Error('Compression, filter and interlace must all be 0');
+  }
+
+  const firstIdat = types.indexOf('IDAT');
+  const lastIdat = types.lastIndexOf('IDAT');
+  if (firstIdat === -1) throw new Error('No IDAT chunk');
+  if (types.slice(firstIdat, lastIdat + 1).some((t) => t !== 'IDAT')) {
+    throw new Error('IDAT chunks are not consecutive');
+  }
+  if (types.lastIndexOf('PLTE') > firstIdat) {
+    throw new Error('PLTE comes after IDAT');
+  }
+  const iend = chunks.at(-1);
+  if (iend?.type !== 'IEND' || types.indexOf('IEND') !== types.length - 1) {
+    throw new Error('IEND is not the single last chunk');
+  }
+  if (iend.data.length !== 0) throw new Error('IEND has data');
+
+  const imageData = inflateSync(
+    Buffer.concat(chunks.filter((c) => c.type === 'IDAT').map((c) => c.data)),
+  );
+  const scanlineLength =
+    1 +
+    Math.ceil((width * PNG_CHANNELS_BY_COLOR_TYPE[colorType] * bitDepth) / 8);
+  if (imageData.length !== height * scanlineLength) {
+    throw new Error(
+      `Image data is ${imageData.length} bytes, expected ${height * scanlineLength}`,
+    );
+  }
+  for (let row = 0; row < height; row++) {
+    if (imageData[row * scanlineLength] > PNG_FILTER_TYPE_MAX) {
+      throw new Error(`Scanline ${row} has an invalid filter type`);
+    }
+  }
+}
+
 describe('deploy config', () => {
   it('ships a _redirects file with only the root 302', () => {
     expect(readFileSync('dist/_redirects', 'utf8').trim()).toBe(
@@ -96,16 +178,7 @@ describe('deploy config', () => {
     expect(png.readUInt32BE(16)).toBe(32);
     expect(png.readUInt32BE(20)).toBe(32);
 
-    const { chunks, endOffset } = readPngChunks(png);
-    expect(chunks.some((chunk) => chunk.type === 'IDAT')).toBe(true);
-    expect(chunks.at(-1)?.type).toBe('IEND');
-    expect(endOffset).toBe(png.length);
-    const imageData = Buffer.concat(
-      chunks
-        .filter((chunk) => chunk.type === 'IDAT')
-        .map((chunk) => chunk.data),
-    );
-    expect(() => inflateSync(imageData)).not.toThrow();
+    expect(() => validatePng(png, 32)).not.toThrow();
   });
 
   it.each(['dist/privacy.html', 'dist/pt-br/privacy.html'])(
