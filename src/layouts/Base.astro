@@ -1,0 +1,58 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import {
+  htmlLang,
+  locales,
+  otherLocale,
+  repoUrl,
+  ui,
+  type Locale,
+} from '../i18n/ui';
+import '../styles/global.css';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  page: string;
+}
+
+const { locale, title, page } = Astro.props;
+const strings = ui[locale];
+const switchTo = otherLocale(locale);
+const absolute = (target: Locale) =>
+  new URL(getRelativeLocaleUrl(target, page), Astro.site).href;
+---
+
+<html lang={htmlLang[locale]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{`${title} · ${strings.siteName}`}</title>
+    <link rel="canonical" href={absolute(locale)} />
+    {locales.map((target) => (
+      <link
+        rel="alternate"
+        hreflang={htmlLang[target]}
+        href={absolute(target)}
+      />
+    ))}
+  </head>
+  <body>
+    <header>
+      <span>{strings.siteName}</span>
+      <a
+        href={getRelativeLocaleUrl(switchTo, page)}
+        hreflang={htmlLang[switchTo]}
+        lang={htmlLang[switchTo]}
+      >
+        {strings.switchLabel}
+      </a>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <a href={repoUrl}>GitHub</a>
+    </footer>
+  </body>
+</html>
