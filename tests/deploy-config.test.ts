@@ -156,26 +156,23 @@ describe('deploy config', () => {
     expect(config.previews).toEqual({});
   });
 
-  it.each(['favicon.svg', 'favicon-dark.svg', 'favicon-32.png'])(
-    'ships %s',
-    (file) => {
-      expect(existsSync(`dist/${file}`)).toBe(true);
-    },
-  );
+  it.each(['favicon.svg', 'favicon-32.png'])('ships %s', (file) => {
+    expect(existsSync(`dist/${file}`)).toBe(true);
+  });
 
-  // SHA-256 of the approved files in the vault's Design/Logo/Assets/ (Logo.md approved 2026-10-08).
-  // The vault isn't available in CI, so the hashes stand in for it. Change them only with a new logo approval.
+  it('no longer ships the old dark favicon', () => {
+    expect(existsSync('dist/favicon-dark.svg')).toBe(false);
+  });
+
+  // SHA-256 of the approved tile favicon in the vault's Design/Favicon Tile/Assets/ (Favicon Tile.md approved 2026-10-09).
+  // The vault isn't available in CI, so the hash stands in for it. Change it only with a new favicon approval.
   it.each([
     [
       'favicon.svg',
-      '060bbdc6d56e5f02474457759ea05b178c063cf3c3bf3f65a4baab5cb1ff0a51',
-    ],
-    [
-      'favicon-dark.svg',
-      '06dd646b463034839f834effd44442ab3d549bbdc308b5150b0b79be72aac46c',
+      '1e6b6a18cdccab4ca8ee3fa999e729f229e36ba46bbf0129924d90f348873940',
     ],
   ])(
-    'ships %s byte-identical to the approved logo asset',
+    'ships %s byte-identical to the approved favicon asset',
     (file, approvedSha256) => {
       const sha256 = createHash('sha256')
         .update(readFileSync(`dist/${file}`))
@@ -207,7 +204,6 @@ describe('deploy config', () => {
       expect(icons).toEqual([
         { href: '/favicon-32.png', media: null },
         { href: '/favicon.svg', media: null },
-        { href: '/favicon-dark.svg', media: '(prefers-color-scheme: dark)' },
       ]);
     },
   );
