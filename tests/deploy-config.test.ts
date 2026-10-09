@@ -146,7 +146,7 @@ describe('deploy config', () => {
 
   it('points Workers static assets at dist and binds the custom domain', () => {
     const config = JSON.parse(readFileSync('wrangler.jsonc', 'utf8'));
-    expect(config.name).toBe('vital-courier-site');
+    expect(config.name).toBe('vital-courier');
     expect(config.assets).toEqual({ directory: './dist' });
     expect(config.main).toBeUndefined();
     expect(config.routes).toEqual([

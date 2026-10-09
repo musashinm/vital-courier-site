@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "vital-courier-site",
+  "name": "vital-courier",
   "compatibility_date": "2026-10-08",
   "assets": { "directory": "./dist" },
   "routes": [{ "pattern": "vitalcourier.app", "custom_domain": true }],
