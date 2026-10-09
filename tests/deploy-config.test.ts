@@ -44,6 +44,7 @@ function readPngChunks(png: Buffer): { chunks: PngChunk[]; endOffset: number } {
 
 const PNG_IHDR_DATA_LENGTH = 13;
 const PNG_FILTER_TYPE_MAX = 4;
+const PNG_KNOWN_CRITICAL_CHUNK_TYPES = ['IHDR', 'PLTE', 'IDAT', 'IEND'];
 const PNG_CHANNELS_BY_COLOR_TYPE: Record<number, number> = {
   0: 1,
   2: 3,
@@ -64,6 +65,18 @@ function validatePng(png: Buffer, expectedSize: number): void {
   const { chunks, endOffset } = readPngChunks(png);
   if (endOffset !== png.length) throw new Error('Data after the last chunk');
   const types = chunks.map((chunk) => chunk.type);
+
+  const countOf = (type: string) => types.filter((t) => t === type).length;
+  if (countOf('IHDR') !== 1) throw new Error('Expected exactly one IHDR');
+  if (countOf('PLTE') > 1) throw new Error('More than one PLTE');
+  const unknownCriticalType = types.find(
+    (type) =>
+      type[0] === type[0].toUpperCase() &&
+      !PNG_KNOWN_CRITICAL_CHUNK_TYPES.includes(type),
+  );
+  if (unknownCriticalType) {
+    throw new Error(`Unknown critical chunk ${unknownCriticalType}`);
+  }
 
   const ihdr = chunks[0];
   if (ihdr?.type !== 'IHDR') throw new Error('First chunk is not IHDR');
