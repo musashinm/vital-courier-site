@@ -49,6 +49,8 @@ Nos Ajustes do aplicativo, Apagar cópia local apaga a cópia local dos seus reg
 
 Para apagar arquivos exportados, apague-os no aplicativo Arquivos ou no seu serviço de armazenamento.
 
+Apagar o Vital Courier do iPhone apaga tudo o que ele guarda no próprio armazenamento, inclusive a cópia local dos seus dados do Saúde. Seus dados do Apple Saúde e os arquivos já exportados continuam onde estão, assim como o que já estiver salvo em um backup do iPhone.
+
 ## Como desligar o acesso
 
 Você pode desligar o acesso do Vital Courier a qualquer um dos quatro tipos de dados, ou a todos, quando quiser:

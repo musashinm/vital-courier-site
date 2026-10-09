@@ -49,6 +49,8 @@ In Settings, Clear local copy deletes the local copy of your Health readings. It
 
 To delete exported files, delete them in the Files app or in your storage provider.
 
+Deleting Vital Courier from your iPhone deletes everything it keeps in its own storage, including the local copy of your Health data. Your data in Apple Health and the files already exported stay where they are, and so does anything already saved in an iPhone backup.
+
 ## Turning off access
 
 You can turn off Vital Courier's access to any or all of the four data types at any time:
