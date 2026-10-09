@@ -45,7 +45,7 @@ O Vital Courier não usa o iCloud nem o CloudKit para guardar ou sincronizar nad
 
 ## Como guardar e apagar dados
 
-Nos Ajustes do aplicativo, Apagar cópia local apaga a cópia local dos seus registros do Saúde. Isso não mexe nos seus dados do Apple Saúde nem nos arquivos já exportados, e seus ajustes, o histórico de exportações e a pasta escolhida continuam. A próxima execução que puder ler os dados do Saúde lê de novo os quatro tipos de dados.
+Nos Ajustes do aplicativo, Apagar cópia local apaga a cópia local dos seus registros do Saúde. Isso não mexe nos seus dados do Apple Saúde nem nos arquivos já exportados, e suas configurações, o histórico de exportações e a pasta escolhida continuam. A próxima execução que puder ler os dados do Saúde lê de novo os quatro tipos de dados.
 
 Para apagar arquivos exportados, apague-os no aplicativo Arquivos ou no seu serviço de armazenamento.
 
