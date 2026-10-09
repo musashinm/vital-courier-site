@@ -1,13 +1,6 @@
 ---
 import { getRelativeLocaleUrl } from 'astro:i18n';
-import {
-  htmlLang,
-  locales,
-  otherLocale,
-  repoUrl,
-  ui,
-  type Locale,
-} from '../i18n/ui';
+import { htmlLang, locales, repoUrl, ui, type Locale } from '../i18n/ui';
 import '../styles/global.css';
 
 interface Props {
@@ -18,7 +11,6 @@ interface Props {
 
 const { locale, title, page } = Astro.props;
 const strings = ui[locale];
-const switchTo = otherLocale(locale);
 const absolute = (target: Locale) =>
   new URL(getRelativeLocaleUrl(target, page), Astro.site).href;
 ---
@@ -45,22 +37,65 @@ const absolute = (target: Locale) =>
       />
     ))}
   </head>
-  <body>
-    <header>
-      <span>{strings.siteName}</span>
-      <a
-        href={getRelativeLocaleUrl(switchTo, page)}
-        hreflang={htmlLang[switchTo]}
-        lang={htmlLang[switchTo]}
-      >
-        {strings.switchLabel}
-      </a>
+  <body class="site-shell">
+    <div class="site-accent" aria-hidden="true"></div>
+    <a class="skip-link" href="#main-content">
+      {strings.skipLink}
+    </a>
+    <header class="site-header">
+      <div class="shell">
+        <a class="brand" href={getRelativeLocaleUrl(locale, page)}>
+          <picture>
+            <source
+              srcset="/circuit-lockup-dark.svg"
+              media="(prefers-color-scheme: dark)"
+            />
+            <img
+              class="brand-art"
+              src="/circuit-lockup-light.svg"
+              alt="Vital Courier"
+              width="191"
+              height="40"
+            />
+          </picture>
+        </a>
+        <nav class="language" aria-label={strings.languageNavLabel}>
+          {locales.map((target) =>
+            target === locale ? (
+              <span aria-current="page">
+                <abbr
+                  title={strings.languageTitles[target]}
+                  lang={htmlLang[target]}
+                >
+                  {strings.languageLabels[target]}
+                </abbr>
+              </span>
+            ) : (
+              <a
+                href={getRelativeLocaleUrl(target, page)}
+                hreflang={htmlLang[target]}
+              >
+                <abbr
+                  title={strings.languageTitles[target]}
+                  lang={htmlLang[target]}
+                >
+                  {strings.languageLabels[target]}
+                </abbr>
+              </a>
+            ),
+          )}
+        </nav>
+      </div>
     </header>
-    <main>
+    <main id="main-content" class="site-main">
       <slot />
     </main>
-    <footer>
-      <a href={repoUrl}>GitHub</a>
+    <footer class="site-footer">
+      <div class="shell">
+        <a href={repoUrl} aria-label={strings.footerGithubLabel}>
+          GitHub
+        </a>
+      </div>
     </footer>
   </body>
 </html>

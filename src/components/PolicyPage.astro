@@ -21,10 +21,16 @@ const updatedText = new Intl.DateTimeFormat(strings.dateLocale, {
 ---
 
 <Base locale={locale} title={entry.data.title} page="privacy">
-  <article class="prose">
+  <article class="prose policy-prose">
     <h1>{entry.data.title}</h1>
-    <p>
-      {strings.lastUpdated}: <time datetime={updatedIso}>{updatedText}</time> ·{' '}
+    <p class="policy-meta">
+      <span>
+        {strings.lastUpdated}: <time datetime={updatedIso}>{updatedText}</time>
+        <span class="policy-meta__separator" aria-hidden="true">
+          {' '}
+          ·{' '}
+        </span>
+      </span>
       <a href={historyUrl(locale)}>{strings.seeEveryChange}</a>
     </p>
     <Content />
