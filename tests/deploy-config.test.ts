@@ -1,7 +1,46 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
+import { crc32, inflateSync } from 'node:zlib';
 import { parse } from 'node-html-parser';
 import { describe, expect, it } from 'vitest';
+
+const PNG_SIGNATURE_LENGTH = 8;
+const PNG_CHUNK_LENGTH_SIZE = 4;
+const PNG_CHUNK_TYPE_SIZE = 4;
+const PNG_CHUNK_CRC_SIZE = 4;
+
+type PngChunk = { type: string; data: Buffer };
+
+// Walks every chunk after the signature and throws on a bad CRC or a chunk that overruns the file.
+function readPngChunks(png: Buffer): { chunks: PngChunk[]; endOffset: number } {
+  const chunks: PngChunk[] = [];
+  let offset = PNG_SIGNATURE_LENGTH;
+  while (offset < png.length) {
+    const headerSize = PNG_CHUNK_LENGTH_SIZE + PNG_CHUNK_TYPE_SIZE;
+    if (offset + headerSize > png.length) {
+      throw new Error(`Truncated chunk header at offset ${offset}`);
+    }
+    const dataLength = png.readUInt32BE(offset);
+    const typeStart = offset + PNG_CHUNK_LENGTH_SIZE;
+    const dataStart = typeStart + PNG_CHUNK_TYPE_SIZE;
+    const crcStart = dataStart + dataLength;
+    const chunkEnd = crcStart + PNG_CHUNK_CRC_SIZE;
+    if (chunkEnd > png.length) {
+      throw new Error(
+        `Chunk at offset ${offset} runs past the end of the file`,
+      );
+    }
+    const type = png.subarray(typeStart, dataStart).toString('ascii');
+    const storedCrc = png.readUInt32BE(crcStart);
+    const actualCrc = crc32(png.subarray(typeStart, crcStart));
+    if (storedCrc !== actualCrc) {
+      throw new Error(`Bad CRC in ${type} chunk at offset ${offset}`);
+    }
+    chunks.push({ type, data: png.subarray(dataStart, crcStart) });
+    offset = chunkEnd;
+  }
+  return { chunks, endOffset: offset };
+}
 
 describe('deploy config', () => {
   it('ships a _redirects file with only the root 302', () => {
@@ -56,6 +95,17 @@ describe('deploy config', () => {
     expect(png.subarray(12, 16).toString('ascii')).toBe('IHDR');
     expect(png.readUInt32BE(16)).toBe(32);
     expect(png.readUInt32BE(20)).toBe(32);
+
+    const { chunks, endOffset } = readPngChunks(png);
+    expect(chunks.some((chunk) => chunk.type === 'IDAT')).toBe(true);
+    expect(chunks.at(-1)?.type).toBe('IEND');
+    expect(endOffset).toBe(png.length);
+    const imageData = Buffer.concat(
+      chunks
+        .filter((chunk) => chunk.type === 'IDAT')
+        .map((chunk) => chunk.data),
+    );
+    expect(() => inflateSync(imageData)).not.toThrow();
   });
 
   it.each(['dist/privacy.html', 'dist/pt-br/privacy.html'])(
