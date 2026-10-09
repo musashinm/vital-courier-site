@@ -1,6 +1,6 @@
 ---
 title: Privacy Policy
-updated: 2026-10-08
+updated: 2026-10-09
 ---
 
 Vital Courier exports your Apple Health data to a folder you choose. It has no account and no server, and it sends nothing to its developer or to anyone else.
@@ -34,12 +34,12 @@ Once the files are in that folder, the storage provider handles them under its o
 
 Apart from the export files, Vital Courier saves only what it needs to work, and only on your iPhone, in its own storage:
 
-- a protected local copy of the data it has read from Health, including data still waiting to be exported, with the same fields as the export plus each reading's time zone and the day and month it belongs to
-- other working data derived from your Health data, such as daily values and which days still need export
-- your settings
-- a record of which readings were already exported
-- a history of export runs
-- the saved permission to write to your chosen folder
+- A protected local copy of the data it has read from Health, including data still waiting to be exported, with the same fields as the export plus each reading's time zone and the day and month it belongs to
+- Other working data derived from your Health data, such as daily values and which days still need export
+- Your settings
+- A record of which readings were already exported
+- A history of export runs
+- The saved permission to write to your chosen folder
 
 Vital Courier doesn't use iCloud or CloudKit to store or sync any of this. It marks its local Health-data copy, export records, export history and other working data to be excluded from iPhone backups. Apple treats this as a request and doesn't guarantee it. The chosen folder and other settings, along with any pending setup or file-protection error messages, may be included in an iPhone backup.
 
@@ -53,8 +53,8 @@ To delete exported files, delete them in the Files app or in your storage provid
 
 You can turn off Vital Courier's access to any or all of the four data types at any time:
 
-- in the Health app: tap your profile picture, then Apps, then Vital Courier
-- in Settings: Health, then Data Access & Devices, then Vital Courier
+- In the Health app: tap your profile picture, then Apps, then Vital Courier
+- In Settings: Health, then Data Access & Devices, then Vital Courier
 
 To stop exports to a folder, pick a different folder in Vital Courier. If you delete the folder in Files, Vital Courier can no longer write to it and doesn't recreate it.
 
