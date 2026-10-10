@@ -1,0 +1,39 @@
+name: Site problem
+description: A page on vitalcourier.app is broken, wrong or hard to read. / Uma página do vitalcourier.app está quebrada, errada ou difícil de ler.
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Issues are public.** Don't post health information or anything else private here.
+
+        **Issues são públicas.** Não publique informações de saúde nem nada privado aqui.
+  - type: input
+    id: page-url
+    attributes:
+      label: Page URL / URL da página
+      placeholder: https://vitalcourier.app/privacy
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What's wrong? / O que está errado?
+      description: What you saw, and what you expected instead. / O que você viu e o que esperava ver.
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device / Navegador e dispositivo
+      placeholder: Safari on iPhone 15, iOS 26
+    validations:
+      required: false
+  - type: checkboxes
+    id: nothing-private
+    attributes:
+      label: Before you submit / Antes de enviar
+      options:
+        - label: This issue has no health information or anything else private. / Esta issue não tem informações de saúde nem nada privado.
+          required: true
