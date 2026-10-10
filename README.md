@@ -37,7 +37,7 @@ npm run dev
 
 ## CI
 
-`.github/workflows/ci.yml` runs on every pull request and on pushes to `main`. It runs `npm ci`, then `npm run check`, `npm run lint`, `npm run format:check` and `npm test`, on the Node version in `.nvmrc`. `main` only accepts squash merges from a PR whose `verify` job passed.
+`.github/workflows/ci.yml` runs on every pull request and on pushes to `main`. It runs `npm ci`, then `npm run check`, `npm run lint`, `npm run format:check` and `npm test`, on the Node version in `.nvmrc`. A ruleset on `main`, set in the GitHub repo settings rather than in this repo, only accepts squash merges from a PR whose `verify` job passed.
 
 ## Project layout
 
@@ -60,7 +60,7 @@ wrangler.jsonc       Cloudflare Worker config
 
 Cloudflare Workers Builds is connected to this repo and deploys `main` with `npm run build`, then `npx wrangler deploy`. Every merge to `main` goes live on `vitalcourier.app`, with no separate deploy step.
 
-Pull requests get no preview deploys. Preview builds are off in Workers Builds, and `wrangler.jsonc` sets `workers_dev` and `preview_urls` to `false`, so the site is served only on its custom domain. To see a change before it merges, run `npm run build && npm run preview`.
+Pull requests get no preview deploys. Preview builds are turned off in the Workers Builds settings in the Cloudflare dashboard, which live outside this repo. Separately, `wrangler.jsonc` sets `workers_dev` and `preview_urls` to `false`, so the Worker has no `workers.dev` or preview URL and the site is served only on its custom domain. To see a change before it merges, run `npm run build && npm run preview`.
 
 `wrangler.jsonc` turns on Workers Logs and Traces at full sampling. The site has no Worker script yet, and requests that only hit static assets may not show up in either.
 
