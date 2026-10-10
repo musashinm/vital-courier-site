@@ -1,5 +1,7 @@
 import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
 import tailwindcss from '@tailwindcss/vite';
+import externalLinks from './src/markdown/external-links.ts';
 
 export default defineConfig({
   site: 'https://vitalcourier.app',
@@ -9,6 +11,9 @@ export default defineConfig({
     defaultLocale: 'en',
     locales: ['en', 'pt-br'],
     routing: { prefixDefaultLocale: false },
+  },
+  markdown: {
+    processor: unified({ rehypePlugins: [[externalLinks, {}]] }),
   },
   vite: { plugins: [tailwindcss()] },
 });

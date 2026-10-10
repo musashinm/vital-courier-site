@@ -15,6 +15,7 @@ export const ui: Record<
     languageNavLabel: string;
     skipLink: string;
     footerGithubLabel: string;
+    opensInNewTab: string;
     lastUpdated: string;
     seeEveryChange: string;
     dateLocale: string;
@@ -26,7 +27,8 @@ export const ui: Record<
     languageTitles: { en: 'English', 'pt-br': 'Português do Brasil' },
     languageNavLabel: 'Language',
     skipLink: 'Skip to content',
-    footerGithubLabel: 'Vital Courier on GitHub',
+    footerGithubLabel: 'Vital Courier on GitHub (opens in a new tab)',
+    opensInNewTab: '(opens in a new tab)',
     lastUpdated: 'Last updated',
     seeEveryChange: 'See every change on GitHub',
     dateLocale: 'en-US',
@@ -37,7 +39,8 @@ export const ui: Record<
     languageTitles: { en: 'English', 'pt-br': 'Português do Brasil' },
     languageNavLabel: 'Idioma',
     skipLink: 'Pular para o conteúdo',
-    footerGithubLabel: 'Vital Courier no GitHub',
+    footerGithubLabel: 'Vital Courier no GitHub (abre em uma nova aba)',
+    opensInNewTab: '(abre em uma nova aba)',
     lastUpdated: 'Última atualização',
     seeEveryChange: 'Ver todas as mudanças no GitHub',
     dateLocale: 'pt-BR',

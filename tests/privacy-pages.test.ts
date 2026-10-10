@@ -16,6 +16,7 @@ const pages = [
     dateLocale: 'en-US',
     lastUpdated: 'Last updated',
     title: 'Privacy Policy',
+    opensInNewTab: ' (opens in a new tab)',
     warning: 'post health information',
     headings: [
       'What Vital Courier reads',
@@ -39,6 +40,7 @@ const pages = [
     dateLocale: 'pt-BR',
     lastUpdated: 'Última atualização',
     title: 'Política de Privacidade',
+    opensInNewTab: ' (abre em uma nova aba)',
     warning: 'publique informações de saúde',
     headings: [
       'O que o Vital Courier lê',
@@ -116,6 +118,21 @@ describe.each(pages)('$file', (page) => {
     );
     expect(links).toContain(`${repoUrl}/issues`);
     expect(links).toContain(githubPrivacyUrl);
+  });
+
+  it('tells screen readers that the policy body links open in a new tab', () => {
+    const root = load(page.file);
+    const linkHrefs = [
+      `${repoUrl}/commits/main/src/content/privacy/${page.locale}.md`,
+      `${repoUrl}/issues`,
+      githubPrivacyUrl,
+    ];
+    for (const href of linkHrefs) {
+      const link = root.querySelector(`a[href="${href}"]`);
+      expect(link?.querySelector('span.sr-only')?.text).toBe(
+        page.opensInNewTab,
+      );
+    }
   });
 
   it('warns not to post health information in an issue', () => {
