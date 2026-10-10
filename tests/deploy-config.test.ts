@@ -152,8 +152,26 @@ describe('deploy config', () => {
     expect(config.routes).toEqual([
       { pattern: 'vitalcourier.app', custom_domain: true },
     ]);
-    expect(config.preview_urls).toBe(true);
-    expect(config.previews).toEqual({});
+  });
+
+  it('serves the Worker only on the custom domain, with no workers.dev or preview URLs', () => {
+    const config = JSON.parse(readFileSync('wrangler.jsonc', 'utf8'));
+    expect(config.workers_dev).toBe(false);
+    expect(config.preview_urls).toBe(false);
+    expect(config.previews).toBeUndefined();
+  });
+
+  it('configures Workers Logs and Traces', () => {
+    const config = JSON.parse(readFileSync('wrangler.jsonc', 'utf8'));
+    expect(config.observability).toEqual({
+      logs: {
+        enabled: true,
+        head_sampling_rate: 1,
+        invocation_logs: true,
+        persist: true,
+      },
+      traces: { enabled: true, head_sampling_rate: 1, persist: true },
+    });
   });
 
   it.each(['favicon.svg', 'favicon-32.png'])('ships %s', (file) => {

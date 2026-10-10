@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Read the privacy policy
+    url: https://vitalcourier.app/privacy
+    about: The Vital Courier privacy policy in English.
+  - name: Leia a política de privacidade
+    url: https://vitalcourier.app/pt-br/privacy
+    about: A política de privacidade do Vital Courier em português.
