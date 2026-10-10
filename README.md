@@ -14,6 +14,7 @@ Source for [vitalcourier.app](https://vitalcourier.app), the privacy policy site
 
 - Node 24, from `.nvmrc`. The `engines` field in `package.json` allows `^22.22.3 || ^24.16.0 || >=26.3.0`.
 - npm. The `allowScripts` field in `package.json` approves install scripts for `esbuild` and `workerd` only.
+- Docker (optional), only for the container workflow in [Docker](#docker).
 
 ## Getting started
 
@@ -21,6 +22,8 @@ Source for [vitalcourier.app](https://vitalcourier.app), the privacy policy site
 npm ci
 npm run dev
 ```
+
+To run it with nothing on the host but Docker, see [Docker](#docker).
 
 ## Scripts
 
@@ -34,6 +37,25 @@ npm run dev
 | `npm run format`       | `prettier --write .`                                                                                            |
 | `npm run format:check` | `prettier --check .`                                                                                            |
 | `npm test`             | `TZ=America/Los_Angeles astro build && vitest run`. The time zone catches dates that print a day early.         |
+
+## Docker
+
+The site also runs in a container, for local development only. Cloudflare still builds and deploys `main` as described in [Deploying](#deploying), and the native npm workflow above doesn't change.
+
+```bash
+docker compose up
+```
+
+That builds the image and starts the dev server at http://localhost:4321/privacy. Edits on the host reload the page through the bind mount. The first start runs `npm ci` into a named Docker volume, which is the slow part. Later starts skip it, and it runs again on its own when `package-lock.json` changes.
+
+- `docker compose up preview` builds `dist/` and serves it through Wrangler at http://localhost:8787, `_redirects` included.
+- One-off scripts (`check`, `lint`, `format:check`, `test`) run as `docker compose run --rm web npm run <script>`, for example `docker compose run --rm web npm test`.
+- To start over from a clean install, remove the volume with `docker compose --profile preview down --volumes`. The profile flag stops `preview` too, which would otherwise keep the volume in use.
+
+About the setup in `Dockerfile` and `compose.yaml`:
+
+- The base image is Debian (`node:24.21.0-bookworm-slim`), not Alpine, because workerd, which `npm run preview` runs on, has no musl build. The tag matches `.tool-versions`, so bump both together.
+- `astro dev` runs with `--ignore-lock`. Astro's lock file in `.astro/` is shared with the host through the bind mount, and the image has no `ps`, so Astro would treat any live PID in a stale lock as a running server and refuse to start. The cost is that `astro dev stop`, `status` and `logs` can't see the container's server.
 
 ## CI
 
@@ -54,6 +76,9 @@ src/
 public/              _redirects, favicons and the logo lockups, copied into dist/ as they are
 tests/               Vitest suites that read the built HTML and the deploy config
 wrangler.jsonc       Cloudflare Worker config
+Dockerfile           Dev-only image for the Docker workflow
+compose.yaml         The web and preview services
+.dockerignore        Keeps node_modules, build output and .env files out of the build context
 ```
 
 ## Deploying
