@@ -67,3 +67,12 @@ Pull requests get no preview deploys. Preview builds are turned off in the Worke
 ## Questions about the policy
 
 Open an issue. Issues are public, so don't put health information or anything private in one.
+
+## License
+
+Everything in this repo is under the MIT License (see `LICENSE`), except the material below, which stays copyright 2026 Kleber Kihara, all rights reserved:
+
+- The privacy policy text in `src/content/privacy/en.md` and `src/content/privacy/pt-br.md`.
+- The Vital Courier logos and icons: `public/circuit-lockup-dark.svg`, `public/circuit-lockup-light.svg`, `public/favicon.svg` and `public/favicon-32.png`.
+
+The exception covers copies of that material too, such as the policy excerpts in `tests/privacy-pages.test.ts` and the built pages and images in `dist/`. Copying or reusing any of it needs permission.
