@@ -19,7 +19,7 @@ const pages = [
     otherLang: 'pt-BR',
     navLabel: 'Language',
     skipLink: 'Skip to content',
-    footerLabel: 'Vital Courier on GitHub',
+    footerLabel: 'Vital Courier on GitHub (opens in a new tab)',
   },
   {
     file: 'dist/pt-br/privacy.html',
@@ -34,9 +34,12 @@ const pages = [
     otherLang: 'en',
     navLabel: 'Idioma',
     skipLink: 'Pular para o conteúdo',
-    footerLabel: 'Vital Courier no GitHub',
+    footerLabel: 'Vital Courier no GitHub (abre em uma nova aba)',
   },
 ] as const;
+
+// History, issues, GitHub privacy statement and the footer GitHub link.
+const EXTERNAL_LINK_COUNT = 4;
 
 const FOCUSABLE_SELECTOR =
   'a[href], button, input, select, textarea, [tabindex]';
@@ -133,6 +136,25 @@ describe.each(pages)('$file shell', (page) => {
     expect(links[0].getAttribute('href')).toBe(repoUrl);
     expect(links[0].getAttribute('aria-label')).toBe(page.footerLabel);
     expect(links[0].text.trim()).toBe('GitHub');
+  });
+
+  it('opens every external link in a new tab without leaking the opener', () => {
+    const externalLinks = body(page.file).querySelectorAll('a[href^="http"]');
+    expect(externalLinks).toHaveLength(EXTERNAL_LINK_COUNT);
+    for (const link of externalLinks) {
+      expect(link.getAttribute('target')).toBe('_blank');
+      expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+    }
+  });
+
+  it('keeps the brand, language-switch and skip links in the same tab', () => {
+    const sameTabLinks = body(page.file).querySelectorAll(
+      'a.skip-link, header a.brand, nav.language a',
+    );
+    expect(sameTabLinks).toHaveLength(3);
+    for (const link of sameTabLinks) {
+      expect(link.hasAttribute('target')).toBe(false);
+    }
   });
 });
 
