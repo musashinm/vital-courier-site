@@ -31,8 +31,10 @@ x-node: &node
 services:
   web:
     <<: *node
+    # Published on the host's loopback only, so other machines on the network
+    # can't reach the dev server or the bind-mounted files it can serve.
     ports:
-      - '4321:4321'
+      - '127.0.0.1:4321:4321'
     # --ignore-lock: Astro's .astro/dev.json lock is shared with the host
     # through the bind mount, and with no `ps` in the image Astro treats any
     # live PID in it as a running server, so a stale lock can block the start.
@@ -43,7 +45,7 @@ services:
     <<: *node
     profiles: [preview]
     ports:
-      - '8787:8787'
+      - '127.0.0.1:8787:8787'
     command: sh -c 'npm run build && exec npm run preview -- --ip 0.0.0.0'
 
 volumes:
