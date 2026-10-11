@@ -105,3 +105,5 @@ Everything in this repo is under the MIT License (see `LICENSE`), except the mat
 - The Vital Courier logos and icons: `public/circuit-lockup-dark.svg`, `public/circuit-lockup-light.svg`, `public/favicon.svg` and `public/favicon-32.png`.
 
 The exception covers copies of that material too, such as the policy excerpts in `tests/privacy-pages.test.ts` and the built pages and images in `dist/`. Copying or reusing any of it needs permission.
+
+The external-link icon comes from Lucide and, before that, Feather, so it's covered by Lucide's ISC License and Feather's MIT License. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
