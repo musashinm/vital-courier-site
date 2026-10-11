@@ -1,18 +1,15 @@
+import { execFileSync } from 'node:child_process';
 import { readdirSync, readFileSync } from 'node:fs';
+import { basename } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { parse } from 'yaml';
 
 type YamlRecord = Record<string, unknown>;
 
 const GITHUB_DIRECTORY = '.github';
-const WORKFLOWS_DIRECTORY = '.github/workflows';
 
 function isRecord(value: unknown): value is YamlRecord {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-function asRecordList(value: unknown): YamlRecord[] {
-  return Array.isArray(value) ? value.filter(isRecord) : [];
 }
 
 // Collects every `uses` value anywhere in a workflow, so a step can't slip past
@@ -44,23 +41,30 @@ function collectStepsUsing(node: unknown, action: string): YamlRecord[] {
   ];
 }
 
-const workflows = readdirSync(WORKFLOWS_DIRECTORY)
-  .filter((name) => /\.ya?ml$/.test(name))
-  .map((name) => parse(readFileSync(`${WORKFLOWS_DIRECTORY}/${name}`, 'utf8')));
-
-// Every YAML file under .github, including composite action metadata, so an
-// action added outside workflows/ can't bring in an unpinned `uses`.
-const githubYamlFiles = readdirSync(GITHUB_DIRECTORY, {
+// Every YAML file under .github plus every tracked composite action
+// (`action.yml`/`action.yaml`, wherever it lives), so an action added anywhere
+// can't bring in an unpinned `uses` or an unsafe checkout.
+const githubYamlPaths = readdirSync(GITHUB_DIRECTORY, {
   recursive: true,
   encoding: 'utf8',
 })
   .filter((name) => /\.ya?ml$/.test(name))
-  .map((name) => parse(readFileSync(`${GITHUB_DIRECTORY}/${name}`, 'utf8')));
+  .map((name) => `${GITHUB_DIRECTORY}/${name}`);
+const compositeActionPaths = execFileSync(
+  'git',
+  ['ls-files', '*action.yml', '*action.yaml'],
+  { encoding: 'utf8' },
+)
+  .split('\n')
+  .filter((path) => ['action.yml', 'action.yaml'].includes(basename(path)));
+const scannedYamlFiles = [
+  ...new Set([...githubYamlPaths, ...compositeActionPaths]),
+].map((path) => parse(readFileSync(path, 'utf8')));
 
 describe('workflow actions', () => {
   it('pins every action to a full commit SHA', () => {
     // Local references (./...) live in this repo, so they need no pin.
-    const externalUses = githubYamlFiles
+    const externalUses = scannedYamlFiles
       .flatMap(collectUses)
       .filter(
         (reference) =>
@@ -73,8 +77,8 @@ describe('workflow actions', () => {
   });
 
   it('does not persist the checkout token in the git config', () => {
-    const checkoutSteps = workflows.flatMap((workflow) =>
-      collectStepsUsing(workflow, 'actions/checkout'),
+    const checkoutSteps = scannedYamlFiles.flatMap((file) =>
+      collectStepsUsing(file, 'actions/checkout'),
     );
     expect(checkoutSteps.length).toBeGreaterThan(0);
     for (const step of checkoutSteps) {
@@ -106,9 +110,16 @@ describe('Dockerfile', () => {
 
 describe('dependabot config', () => {
   const config = parse(readFileSync('.github/dependabot.yml', 'utf8'));
-  const updates = asRecordList(config.updates);
+  const updates: YamlRecord[] = config.updates;
   const byEcosystem = (name: string) =>
     updates.find((update) => update['package-ecosystem'] === name);
+
+  it('lists updates as an array of records', () => {
+    expect(Array.isArray(config.updates)).toBe(true);
+    for (const update of config.updates) {
+      expect(isRecord(update)).toBe(true);
+    }
+  });
 
   it('uses config version 2', () => {
     expect(config.version).toBe(2);
