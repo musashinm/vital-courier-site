@@ -7,6 +7,8 @@
 
   --text-policy-meta: 0.875rem;
   --text-policy-meta--line-height: 1.375rem;
+  --text-policy-toc-link: 0.9375rem;
+  --text-policy-toc-link--line-height: 1.375rem;
   --text-policy-body: 1.0625rem;
   --text-policy-body--line-height: 1.75rem;
   --text-policy-h2-compact: 1.4375rem;
@@ -337,7 +339,7 @@
   margin: 0 0 1.25rem;
 }
 .policy-prose :where(p.policy-meta) {
-  margin: 1rem 0 2.5rem;
+  margin: 1rem 0 1.5rem;
   font-size: var(--text-policy-meta);
   font-weight: 400;
   line-height: var(--text-policy-meta--line-height);
@@ -359,4 +361,98 @@
 }
 .policy-prose :where(li + li) {
   margin-top: 0.5rem;
+}
+.policy-prose .policy-meta a {
+  align-self: flex-start;
+}
+.policy-prose .policy-lead {
+  margin: 0 0 2rem;
+}
+.policy-prose .policy-toc {
+  padding-block: 1.25rem;
+  border-block: 1px solid var(--vc-border);
+  scroll-margin-block-start: 1.5rem;
+}
+.policy-prose .policy-toc__title {
+  margin: 0 0 0.75rem;
+  font-size: var(--text-policy-meta);
+  font-weight: 700;
+  line-height: var(--text-policy-meta--line-height);
+}
+.policy-prose .policy-toc__list {
+  margin: -6px;
+  padding: 6px;
+  list-style: none;
+  overflow: visible;
+}
+.policy-prose .policy-toc__list li {
+  margin: 0 0 0.25rem;
+  padding: 0;
+  break-inside: avoid;
+}
+.policy-prose .policy-toc__list li + li {
+  margin-top: 0;
+}
+.policy-prose .policy-toc__list li:last-child {
+  margin-bottom: 0;
+}
+.policy-prose .policy-toc__list a {
+  display: inline-flex;
+  min-height: 2rem;
+  align-items: center;
+  margin-inline: -0.125rem;
+  padding-block: 0.3125rem;
+  padding-inline: 0.125rem;
+  font-size: var(--text-policy-toc-link);
+  font-weight: 500;
+  line-height: var(--text-policy-toc-link--line-height);
+}
+.policy-prose :where(h2) {
+  scroll-margin-block-start: 1.5rem;
+}
+.external-link-icon {
+  display: inline-block;
+  width: 0.875rem;
+  height: 0.875rem;
+  flex: none;
+  margin-inline-start: 0.3125rem;
+  vertical-align: -0.125em;
+}
+.external-link--no-text {
+  white-space: nowrap;
+}
+.policy-prose .policy-section-return {
+  margin: 1.25rem 0 0;
+}
+.policy-prose .policy-section-return a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  font-size: var(--text-policy-meta);
+  font-weight: 600;
+  line-height: var(--text-policy-meta--line-height);
+}
+.policy-prose .policy-toc__list a:active,
+.policy-prose .policy-section-return a:active {
+  color: var(--vc-link-hover);
+  background: var(--vc-soft);
+  box-shadow: none;
+}
+@media (min-width: 40rem) {
+  .policy-prose .policy-toc {
+    padding-block: 1.5rem;
+  }
+  .policy-prose .policy-toc__list {
+    column-count: 2;
+    column-gap: 2rem;
+  }
+  .policy-prose .policy-toc__list li {
+    margin-bottom: 0.5rem;
+  }
+  .policy-prose .policy-toc__list li:last-child {
+    margin-bottom: 0;
+  }
+  .policy-prose .policy-section-return {
+    display: none;
+  }
 }

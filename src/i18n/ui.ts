@@ -18,6 +18,8 @@ export const ui: Record<
     opensInNewTab: string;
     lastUpdated: string;
     seeEveryChange: string;
+    onThisPage: string;
+    backToContents: string;
     dateLocale: string;
   }
 > = {
@@ -27,10 +29,12 @@ export const ui: Record<
     languageTitles: { en: 'English', 'pt-br': 'Português do Brasil' },
     languageNavLabel: 'Language',
     skipLink: 'Skip to content',
-    footerGithubLabel: 'Vital Courier on GitHub (opens in a new tab)',
+    footerGithubLabel: 'Vital Courier on GitHub',
     opensInNewTab: '(opens in a new tab)',
     lastUpdated: 'Last updated',
     seeEveryChange: 'See every change on GitHub',
+    onThisPage: 'On this page',
+    backToContents: 'Back to contents',
     dateLocale: 'en-US',
   },
   'pt-br': {
@@ -39,10 +43,12 @@ export const ui: Record<
     languageTitles: { en: 'English', 'pt-br': 'Português do Brasil' },
     languageNavLabel: 'Idioma',
     skipLink: 'Pular para o conteúdo',
-    footerGithubLabel: 'Vital Courier no GitHub (abre em uma nova aba)',
+    footerGithubLabel: 'Vital Courier no GitHub',
     opensInNewTab: '(abre em uma nova aba)',
     lastUpdated: 'Última atualização',
     seeEveryChange: 'Ver todas as mudanças no GitHub',
+    onThisPage: 'Nesta página',
+    backToContents: 'Voltar ao conteúdo',
     dateLocale: 'pt-BR',
   },
 };

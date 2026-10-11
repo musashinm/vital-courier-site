@@ -1,0 +1,22 @@
+---
+// Renders the shared icon data as markup; attribute names are mapped by hand because the data uses HAST property names.
+import { pathProperties, svgProperties } from '../icons/external-link';
+---
+
+<svg
+  class={svgProperties.className.join(' ')}
+  width={svgProperties.width}
+  height={svgProperties.height}
+  viewBox={svgProperties.viewBox}
+  aria-hidden={svgProperties.ariaHidden}
+  focusable={svgProperties.focusable}
+>
+  <path
+    fill={pathProperties.fill}
+    stroke={pathProperties.stroke}
+    stroke-linecap={pathProperties.strokeLinecap}
+    stroke-linejoin={pathProperties.strokeLinejoin}
+    stroke-width={pathProperties.strokeWidth}
+    d={pathProperties.d}
+  ></path>
+</svg>

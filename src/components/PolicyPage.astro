@@ -1,6 +1,7 @@
 ---
 import { getEntry, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import ExternalLinkIcon from './ExternalLinkIcon.astro';
 import { historyUrl, ui, type Locale } from '../i18n/ui';
 
 interface Props {
@@ -31,10 +32,8 @@ const updatedText = new Intl.DateTimeFormat(strings.dateLocale, {
           ·{' '}
         </span>
       </span>
-      <a href={historyUrl(locale)} target="_blank" rel="noopener noreferrer">
-        {strings.seeEveryChange}
-        <span class="sr-only"> {strings.opensInNewTab}</span>
-      </a>
+      <!-- prettier-ignore -->
+      <a href={historyUrl(locale)} target="_blank" rel="noopener noreferrer">{`${strings.seeEveryChange}\u2060`}<ExternalLinkIcon /><span class="sr-only"> {strings.opensInNewTab}</span></a>
     </p>
     <Content />
   </article>
