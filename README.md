@@ -62,6 +62,8 @@ About the setup in `Dockerfile` and `compose.yaml`:
 
 `.github/workflows/ci.yml` runs on every pull request and on pushes to `main`. It runs `npm ci`, then `npm run check`, `npm run lint`, `npm run format:check` and `npm test`, on the Node version in `.nvmrc`. A ruleset on `main`, set in the GitHub repo settings rather than in this repo, only accepts squash merges from a PR whose `verify` job passed. Both actions are pinned to commit SHAs, and checkout doesn't keep the token in the git config (`persist-credentials: false`).
 
+`.github/dependabot.yml` checks the Actions, the Docker image and npm weekly, and waits 7 days after a release before proposing it. npm minor and patch bumps arrive as one grouped PR; majors come one per PR. Node majors are ignored for the Docker image. Its PRs need the same review or an admin merge as any other.
+
 ## Project layout
 
 ```
