@@ -1,23 +1,9 @@
 import type { Element, Root, RootContent } from 'hast';
-import { locales, ui, type Locale } from '../i18n/ui';
+import { ui } from '../i18n/ui';
+import { localeFromMarkdownPath, type FileWithPath } from './markdown-locale';
 
 const EXTERNAL_URL_PATTERN = /^https?:\/\//;
-
-interface FileWithPath {
-  path?: string;
-}
-
-function localeFromMarkdownPath(filePath: string | undefined): Locale {
-  const fileName = filePath?.split(/[\\/]/).pop() ?? '';
-  const locale = locales.find((candidate) => fileName === `${candidate}.md`);
-  if (!locale) {
-    throw new Error(
-      `external-links: cannot tell the locale of "${filePath ?? '(no path)'}". ` +
-        `Name the Markdown file after one of: ${locales.join(', ')} (for example "${locales[0]}.md").`,
-    );
-  }
-  return locale;
-}
+const PLUGIN_NAME = 'external-links';
 
 function isExternalLink(node: RootContent | Root): node is Element {
   return (
@@ -51,7 +37,7 @@ function openExternalLinksInNewTab(
 
 export default function externalLinks() {
   return (tree: Root, file: FileWithPath) => {
-    const locale = localeFromMarkdownPath(file.path);
+    const locale = localeFromMarkdownPath(file.path, PLUGIN_NAME);
     openExternalLinksInNewTab(tree, ui[locale].opensInNewTab);
   };
 }
