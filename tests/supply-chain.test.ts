@@ -82,9 +82,10 @@ describe('workflow actions', () => {
     );
     expect(checkoutSteps.length).toBeGreaterThan(0);
     for (const step of checkoutSteps) {
-      expect(isRecord(step.with) && step.with['persist-credentials']).toBe(
-        false,
-      );
+      const persistCredentials = isRecord(step.with)
+        ? step.with['persist-credentials']
+        : undefined;
+      expect(persistCredentials).toBe(false);
     }
   });
 });
