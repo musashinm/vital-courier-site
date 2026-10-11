@@ -196,16 +196,26 @@ describe('npm lockfile', () => {
   });
 
   it('overrides the typography parser while typography asks for an older one', () => {
-    const typographyDependencies = lockedPackages[
-      `node_modules/${TYPOGRAPHY_PACKAGE}`
-    ]?.dependencies as Record<string, string> | undefined;
+    // If typography is ever dropped or stops depending on the parser, update
+    // this test together with the override.
+    const typographyEntry =
+      lockedPackages[`node_modules/${TYPOGRAPHY_PACKAGE}`];
+    expect(typographyEntry).toBeDefined();
+    const typographyDependencies = typographyEntry?.dependencies as
+      Record<string, string> | undefined;
     const declaredSpec = typographyDependencies?.[PARSER_PACKAGE];
-    // Anything but a plain x.y.z counts as needing the override (fail-safe).
+    expect(declaredSpec).toBeDefined();
+
+    // Minimum version of a plain x.y.z, or one prefixed by ^, ~, >= or =.
+    // Anything else (ranges, prereleases, tags) is unparseable and counts as
+    // needing the override (fail-safe).
+    const minimumVersion = /^(?:\^|~|>=|=)?\s*(\d+\.\d+\.\d+)$/.exec(
+      declaredSpec as string,
+    )?.[1];
     const declaresFixedVersion =
-      declaredSpec !== undefined &&
-      /^\d+\.\d+\.\d+$/.test(declaredSpec) &&
-      compareVersions(declaredSpec, FIXED_PARSER_VERSION) >= 0;
-    if (declaredSpec === undefined || declaresFixedVersion) return;
+      minimumVersion !== undefined &&
+      compareVersions(minimumVersion, FIXED_PARSER_VERSION) >= 0;
+    if (declaresFixedVersion) return;
 
     const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
     expect(packageJson.overrides?.[TYPOGRAPHY_PACKAGE]?.[PARSER_PACKAGE]).toBe(
