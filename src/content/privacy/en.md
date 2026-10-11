@@ -1,6 +1,6 @@
 ---
 title: Privacy Policy
-updated: 2026-10-10
+updated: 2026-10-11
 ---
 
 Vital Courier exports your Apple Health data to a folder you choose. It has no account and no server, and it sends nothing to its developer or to anyone else.
@@ -69,6 +69,8 @@ The Vital Courier app has no account and no sign-in. It contains no analytics, a
 This website, vitalcourier.app, uses Cloudflare Web Analytics to count visits. When you open a page in a browser, Cloudflare adds a small script that sends Cloudflare a report on how the page loaded. The report includes the page address, the address of the page that linked you here if your browser shares it, your browser and operating system versions, how long the page took to load, how much memory the page's scripts used, and a random ID for that one page load. As with any web request, Cloudflare also sees your IP address, which it uses to tell which country the visit came from.
 
 The site sets no cookies and stores nothing in your browser. Cloudflare says Web Analytics doesn't collect or use visitors' personal data and doesn't track individual people across websites. It keeps every report for seven days, then a sample of about one in ten. The developer sees summary reports in Cloudflare's dashboard, such as page views by country, page, referring site, device type, browser and operating system, for the last six months. Ad blockers often block the script, and the page works the same without it. Cloudflare also hosts this site, so it handles every request to it, not only these reports, under its own [privacy policy](https://www.cloudflare.com/policies/privacy/).
+
+Cloudflare's Workers Logs and Traces are also turned on for this site. They only record requests that run code on Cloudflare's servers, and this site is only static files, so today they record nothing. If the site ever runs such code, these records may include the page address, your IP address, the approximate location Cloudflare works out from it (such as country, region and city), your network provider, your browser's user agent, the page that linked you here and your language settings. Cloudflare keeps them for no more than seven days.
 
 ## Children
 

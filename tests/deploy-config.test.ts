@@ -176,6 +176,7 @@ describe('deploy config', () => {
     const config = JSON.parse(readFileSync('wrangler.jsonc', 'utf8'));
     expect(config.name).toBe('vital-courier');
     expect(config.assets).toEqual({ directory: './dist' });
+    // The privacy policy says Workers Logs and Traces record nothing because no Worker script runs. Adding `main` (or `run_worker_first`) means updating that paragraph in both languages.
     expect(config.main).toBeUndefined();
     expect(config.routes).toEqual([
       { pattern: 'vitalcourier.app', custom_domain: true },

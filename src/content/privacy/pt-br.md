@@ -1,6 +1,6 @@
 ---
 title: Política de Privacidade
-updated: 2026-10-10
+updated: 2026-10-11
 ---
 
 O Vital Courier exporta seus dados do Apple Saúde para uma pasta que você escolhe. Ele não tem conta nem servidor, e não envia nada ao desenvolvedor nem a mais ninguém.
@@ -69,6 +69,8 @@ O aplicativo Vital Courier não tem conta nem login. Ele não tem análise de us
 Este site, vitalcourier.app, usa o Cloudflare Web Analytics para contar visitas. Quando você abre uma página no navegador, a Cloudflare acrescenta um pequeno script que envia à Cloudflare um relatório de como a página carregou. O relatório inclui o endereço da página, o endereço da página que trouxe você até aqui, se o seu navegador o informar, as versões do seu navegador e do sistema operacional, quanto tempo a página levou para carregar, quanta memória os scripts da página usaram e um identificador aleatório daquele carregamento. Como em qualquer acesso pela web, a Cloudflare também vê o seu endereço IP, que usa para saber de qual país veio a visita.
 
 O site não grava cookies nem guarda nada no seu navegador. Segundo a Cloudflare, o Web Analytics não coleta nem usa dados pessoais dos visitantes e não rastreia pessoas individualmente entre sites. A Cloudflare guarda todos os relatórios por sete dias e, depois, só uma amostra de cerca de um em cada dez. O desenvolvedor vê relatórios resumidos no painel da Cloudflare, como visualizações de página por país, página, site de origem, tipo de dispositivo, navegador e sistema operacional, dos últimos seis meses. Bloqueadores de anúncios costumam bloquear o script, e a página funciona igual sem ele. A Cloudflare também hospeda este site, então trata todos os acessos a ele, não só esses relatórios, conforme a própria [política de privacidade](https://www.cloudflare.com/policies/privacy/).
+
+O Workers Logs e o Workers Traces da Cloudflare também estão ligados para este site. Eles só registram acessos que executam código nos servidores da Cloudflare, e este site é feito só de arquivos estáticos, então hoje não registram nada. Se o site passar a executar esse tipo de código, esses registros podem incluir o endereço da página, o seu endereço IP, a localização aproximada que a Cloudflare deduz dele (como país, região e cidade), o seu provedor de internet, o identificador do seu navegador (user agent), a página que trouxe você até aqui e as suas preferências de idioma. A Cloudflare guarda esses registros por no máximo sete dias.
 
 ## Crianças
 
