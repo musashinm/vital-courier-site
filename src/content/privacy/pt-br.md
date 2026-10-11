@@ -1,6 +1,6 @@
 ---
 title: Política de Privacidade
-updated: 2026-10-09
+updated: 2026-10-10
 ---
 
 O Vital Courier exporta seus dados do Apple Saúde para uma pasta que você escolhe. Ele não tem conta nem servidor, e não envia nada ao desenvolvedor nem a mais ninguém.
@@ -62,11 +62,17 @@ Para parar as exportações para uma pasta, escolha outra pasta no Vital Courier
 
 ## O que nunca é coletado
 
-O Vital Courier não tem conta nem login. Ele não tem análise de uso, publicidade, rastreamento nem relatórios de falhas, e não faz nenhuma conexão de rede por conta própria. Seus dados do Saúde nunca chegam ao desenvolvedor.
+O aplicativo Vital Courier não tem conta nem login. Ele não tem análise de uso, publicidade, rastreamento nem relatórios de falhas, e não faz nenhuma conexão de rede por conta própria. Seus dados do Saúde nunca chegam ao desenvolvedor.
+
+## Este site
+
+Este site, vitalcourier.app, usa o Cloudflare Web Analytics para contar visitas. Quando você abre uma página no navegador, a Cloudflare acrescenta um pequeno script que envia à Cloudflare um relatório de como a página carregou. O relatório inclui o endereço da página, o endereço da página que trouxe você até aqui, se o seu navegador o informar, as versões do seu navegador e do sistema operacional, quanto tempo a página levou para carregar, quanta memória os scripts da página usaram e um identificador aleatório daquele carregamento. Como em qualquer acesso pela web, a Cloudflare também vê o seu endereço IP, que usa para saber de qual país veio a visita.
+
+O site não grava cookies nem guarda nada no seu navegador. Segundo a Cloudflare, o Web Analytics não coleta nem usa dados pessoais dos visitantes e não rastreia pessoas individualmente entre sites. A Cloudflare guarda todos os relatórios por sete dias e, depois, só uma amostra de cerca de um em cada dez. O desenvolvedor vê relatórios resumidos no painel da Cloudflare, como visualizações de página por país, página, site de origem, tipo de dispositivo, navegador e sistema operacional, dos últimos seis meses. Bloqueadores de anúncios costumam bloquear o script, e a página funciona igual sem ele. A Cloudflare também hospeda este site, então trata todos os acessos a ele, não só esses relatórios, conforme a própria [política de privacidade](https://www.cloudflare.com/policies/privacy/).
 
 ## Crianças
 
-O Vital Courier não é voltado para crianças, e o desenvolvedor não coleta nada de ninguém, crianças incluídas.
+O Vital Courier não é voltado para crianças. O aplicativo não coleta nada de ninguém, crianças incluídas, e este site reúne só as estatísticas de visita descritas acima.
 
 ## Mudanças nesta política
 

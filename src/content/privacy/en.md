@@ -1,6 +1,6 @@
 ---
 title: Privacy Policy
-updated: 2026-10-09
+updated: 2026-10-10
 ---
 
 Vital Courier exports your Apple Health data to a folder you choose. It has no account and no server, and it sends nothing to its developer or to anyone else.
@@ -62,11 +62,17 @@ To stop exports to a folder, pick a different folder in Vital Courier. If you de
 
 ## What is never collected
 
-Vital Courier has no account and no sign-in. It contains no analytics, advertising, tracking or crash reporting, and it makes no network connections of its own. Your Health data never reaches the developer.
+The Vital Courier app has no account and no sign-in. It contains no analytics, advertising, tracking or crash reporting, and it makes no network connections of its own. Your Health data never reaches the developer.
+
+## This website
+
+This website, vitalcourier.app, uses Cloudflare Web Analytics to count visits. When you open a page in a browser, Cloudflare adds a small script that sends Cloudflare a report on how the page loaded. The report includes the page address, the address of the page that linked you here if your browser shares it, your browser and operating system versions, how long the page took to load, how much memory the page's scripts used, and a random ID for that one page load. As with any web request, Cloudflare also sees your IP address, which it uses to tell which country the visit came from.
+
+The site sets no cookies and stores nothing in your browser. Cloudflare says Web Analytics doesn't collect or use visitors' personal data and doesn't track individual people across websites. It keeps every report for seven days, then a sample of about one in ten. The developer sees summary reports in Cloudflare's dashboard, such as page views by country, page, referring site, device type, browser and operating system, for the last six months. Ad blockers often block the script, and the page works the same without it. Cloudflare also hosts this site, so it handles every request to it, not only these reports, under its own [privacy policy](https://www.cloudflare.com/policies/privacy/).
 
 ## Children
 
-Vital Courier isn't directed at children, and its developer collects nothing from anyone, children included.
+Vital Courier isn't directed at children. The app collects nothing from anyone, children included, and this website gathers only the visit statistics described above.
 
 ## Changes to this policy
 
