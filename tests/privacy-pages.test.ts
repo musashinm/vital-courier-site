@@ -100,7 +100,7 @@ describe.each(pages)('$file', (page) => {
     for (const heading of page.headings) expect(h2s).toContain(heading);
   });
 
-  it('ships no client-side JavaScript', () => {
+  it('ships no client-side JavaScript of its own', () => {
     expect(load(page.file).querySelectorAll('script')).toHaveLength(0);
   });
 
