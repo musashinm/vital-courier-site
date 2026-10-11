@@ -55,7 +55,7 @@ That builds the image and starts the dev server at http://localhost:4321/privacy
 
 About the setup in `Dockerfile` and `compose.yaml`:
 
-- The base image is Debian (`node:24.21.0-bookworm-slim`), not Alpine, because workerd, which `npm run preview` runs on, has no musl build. The tag matches `.tool-versions`, so bump both together.
+- The base image is Debian (`node:24.21.0-bookworm-slim`), not Alpine, because workerd, which `npm run preview` runs on, has no musl build. It runs Node 24 to match `.nvmrc`. The digest after the tag pins the exact image, and Dependabot proposes a refreshed digest or a newer 24.x each week.
 - `astro dev` runs with `--ignore-lock`. Astro's lock file in `.astro/` is shared with the host through the bind mount, and the image has no `ps`, so Astro would treat any live PID in a stale lock as a running server and refuse to start. The cost is that `astro dev stop`, `status` and `logs` can't see the container's server.
 
 ## CI
