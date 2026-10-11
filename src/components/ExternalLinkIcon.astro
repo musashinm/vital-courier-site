@@ -1,0 +1,27 @@
+---
+// Renders the shared icon data as markup; attribute names are mapped by hand because the data uses HAST property names.
+import { pathProperties, svgProperties } from '../icons/external-link';
+
+// The shared data types these as plain strings, which Astro's SVG attribute types reject.
+const ariaHidden = svgProperties.ariaHidden as 'true';
+const strokeLinecap = pathProperties.strokeLinecap as 'round';
+const strokeLinejoin = pathProperties.strokeLinejoin as 'round';
+---
+
+<svg
+  class={svgProperties.className.join(' ')}
+  width={svgProperties.width}
+  height={svgProperties.height}
+  viewBox={svgProperties.viewBox}
+  aria-hidden={ariaHidden}
+  focusable={svgProperties.focusable}
+>
+  <path
+    fill={pathProperties.fill}
+    stroke={pathProperties.stroke}
+    stroke-linecap={strokeLinecap}
+    stroke-linejoin={strokeLinejoin}
+    stroke-width={pathProperties.strokeWidth}
+    d={pathProperties.d}
+  ></path>
+</svg>

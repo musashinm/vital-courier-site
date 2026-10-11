@@ -1,6 +1,7 @@
 ---
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import { htmlLang, locales, repoUrl, ui, type Locale } from '../i18n/ui';
+import ExternalLinkIcon from '../components/ExternalLinkIcon.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -86,14 +87,8 @@ const absolute = (target: Locale) =>
     </main>
     <footer class="site-footer">
       <div class="shell">
-        <a
-          href={repoUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={strings.footerGithubLabel}
-        >
-          GitHub
-        </a>
+        <!-- prettier-ignore -->
+        <a href={repoUrl} target="_blank" rel="noopener noreferrer">{`${strings.footerGithubLabel}\u2060`}<ExternalLinkIcon /><span class="sr-only"> {strings.opensInNewTab}</span></a>
       </div>
     </footer>
   </body>

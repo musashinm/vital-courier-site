@@ -1,9 +1,10 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
-import { HTMLElement, parse } from 'node-html-parser';
+import { HTMLElement, TextNode, parse } from 'node-html-parser';
 import { describe, expect, it } from 'vitest';
 
 const repoUrl = 'https://github.com/musashinm/vital-courier-site';
+const WORD_JOINER = '\u2060';
 
 const pages = [
   {
@@ -19,7 +20,9 @@ const pages = [
     otherLang: 'pt-BR',
     navLabel: 'Language',
     skipLink: 'Skip to content',
-    footerLabel: 'Vital Courier on GitHub (opens in a new tab)',
+    footerLabel: 'Vital Courier on GitHub',
+    historyLabel: 'See every change on GitHub',
+    newTabWarning: ' (opens in a new tab)',
   },
   {
     file: 'dist/pt-br/privacy.html',
@@ -34,7 +37,9 @@ const pages = [
     otherLang: 'en',
     navLabel: 'Idioma',
     skipLink: 'Pular para o conteúdo',
-    footerLabel: 'Vital Courier no GitHub (abre em uma nova aba)',
+    footerLabel: 'Vital Courier no GitHub',
+    historyLabel: 'Ver todas as mudanças no GitHub',
+    newTabWarning: ' (abre em uma nova aba)',
   },
 ] as const;
 
@@ -55,6 +60,18 @@ function body(file: string): HTMLElement {
   const element = root.querySelector('body');
   if (!element) throw new Error(`${file} has no body`);
   return element;
+}
+
+// The icon must be a direct child whose previous node is the visible label ending in U+2060, with no whitespace node between them.
+function expectLabelJoinedToIcon(link: HTMLElement, label: string): void {
+  const icons = link.querySelectorAll('svg.external-link-icon');
+  expect(icons).toHaveLength(1);
+  expect(icons[0].getAttribute('aria-hidden')).toBe('true');
+  const iconIndex = link.childNodes.indexOf(icons[0]);
+  expect(iconIndex).toBeGreaterThan(0);
+  const labelNode = link.childNodes[iconIndex - 1];
+  expect(labelNode).toBeInstanceOf(TextNode);
+  expect(labelNode.text.trimStart()).toBe(`${label}${WORD_JOINER}`);
 }
 
 describe.each(pages)('$file shell', (page) => {
@@ -130,12 +147,27 @@ describe.each(pages)('$file shell', (page) => {
     );
   });
 
-  it('labels the footer GitHub link per locale', () => {
+  it('labels the footer GitHub link with its visible text, icon and warning', () => {
     const links = body(page.file).querySelectorAll('footer.site-footer a');
     expect(links).toHaveLength(1);
-    expect(links[0].getAttribute('href')).toBe(repoUrl);
-    expect(links[0].getAttribute('aria-label')).toBe(page.footerLabel);
-    expect(links[0].text.trim()).toBe('GitHub');
+    const [footerLink] = links;
+    expect(footerLink.getAttribute('href')).toBe(repoUrl);
+    expect(footerLink.getAttribute('aria-label')).toBeUndefined();
+    expectLabelJoinedToIcon(footerLink, page.footerLabel);
+    expect(footerLink.querySelector('span.sr-only')?.text).toBe(
+      page.newTabWarning,
+    );
+  });
+
+  it('joins the history link label to its icon', () => {
+    const historyLink = body(page.file).querySelector(
+      'p.policy-meta a[href*="/commits/main/"]',
+    );
+    expect(historyLink).not.toBeNull();
+    expectLabelJoinedToIcon(historyLink!, page.historyLabel);
+    expect(historyLink!.querySelector('span.sr-only')?.text).toBe(
+      page.newTabWarning,
+    );
   });
 
   it('opens every external link in a new tab without leaking the opener', () => {
