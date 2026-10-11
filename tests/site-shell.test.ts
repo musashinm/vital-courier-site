@@ -38,8 +38,8 @@ const pages = [
   },
 ] as const;
 
-// History, issues, GitHub privacy statement and the footer GitHub link.
-const EXTERNAL_LINK_COUNT = 4;
+// History, Cloudflare's privacy policy, issues, GitHub privacy statement and the footer GitHub link.
+const EXTERNAL_LINK_COUNT = 5;
 
 const FOCUSABLE_SELECTOR =
   'a[href], button, input, select, textarea, [tabindex]';

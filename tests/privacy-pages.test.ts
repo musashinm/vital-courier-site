@@ -29,6 +29,7 @@ const pages = [
       'Keeping and deleting data',
       'Turning off access',
       'What is never collected',
+      'This website',
       'Children',
       'Changes to this policy',
       'Contact',
@@ -53,6 +54,7 @@ const pages = [
       'Como guardar e apagar dados',
       'Como desligar o acesso',
       'O que nunca é coletado',
+      'Este site',
       'Crianças',
       'Mudanças nesta política',
       'Contato',
@@ -159,6 +161,13 @@ describe.each(pages)('$file', (page) => {
     );
     expect(links).toContain(`${repoUrl}/issues`);
     expect(links).toContain(githubPrivacyUrl);
+  });
+
+  it("links to Cloudflare's privacy policy from the website section", () => {
+    const hrefs = load(page.file)
+      .querySelectorAll('a')
+      .map((link) => link.getAttribute('href'));
+    expect(hrefs).toContain('https://www.cloudflare.com/policies/privacy/');
   });
 
   it('tells screen readers that the policy body links open in a new tab', () => {
