@@ -6,6 +6,9 @@ const repoUrl = 'https://github.com/musashinm/vital-courier-site';
 const githubPrivacyUrl =
   'https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement';
 
+// Links whose every rel token is one of these point somewhere rather than load a resource, so the CSP never sees them.
+const navigationLinkRels = ['canonical', 'alternate'];
+
 const pages = [
   {
     locale: 'en',
@@ -99,6 +102,44 @@ describe.each(pages)('$file', (page) => {
 
   it('ships no client-side JavaScript', () => {
     expect(load(page.file).querySelectorAll('script')).toHaveLength(0);
+  });
+
+  it('has no inline styles or event handlers for the CSP to block', () => {
+    const root = load(page.file);
+    expect(root.querySelectorAll('style')).toHaveLength(0);
+    const attributeNames = root
+      .querySelectorAll('*')
+      .flatMap((element) => Object.keys(element.attributes))
+      .map((name) => name.toLowerCase());
+    expect(attributeNames).not.toContain('style');
+    expect(attributeNames.filter((name) => name.startsWith('on'))).toEqual([]);
+  });
+
+  it('loads styles and images only from its own origin', () => {
+    const root = load(page.file);
+    const srcsetUrls = root
+      .querySelectorAll('img[srcset], source')
+      .flatMap((element) =>
+        (element.getAttribute('srcset') ?? '')
+          .split(',')
+          .map((candidate) => candidate.trim().split(/\s+/)[0]),
+      );
+    const resourceUrls = [
+      ...root
+        .querySelectorAll('link')
+        .filter(
+          (link) =>
+            !(link.getAttribute('rel') ?? '')
+              .toLowerCase()
+              .split(/\s+/)
+              .every((token) => navigationLinkRels.includes(token)),
+        )
+        .map((link) => link.getAttribute('href')),
+      ...root.querySelectorAll('img').map((image) => image.getAttribute('src')),
+      ...srcsetUrls,
+    ];
+    expect(resourceUrls.length).toBeGreaterThan(0);
+    for (const url of resourceUrls) expect(url).toMatch(/^\/(?!\/)/);
   });
 
   it('sets the html lang attribute', () => {

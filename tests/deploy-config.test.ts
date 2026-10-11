@@ -144,6 +144,32 @@ describe('deploy config', () => {
     );
   });
 
+  // Header pairs stay in an ordered list so a duplicate line fails the test; Cloudflare would join duplicates with a comma.
+  it('ships a _headers file with the security headers on every path', () => {
+    const lines = readFileSync('dist/_headers', 'utf8')
+      .split('\n')
+      .filter((line) => line.trim() !== '' && !line.trim().startsWith('#'));
+    expect(lines[0]).toBe('/*');
+    const headerLines = lines.slice(1);
+    for (const line of headerLines) expect(line).toMatch(/^\s+\S/);
+    const headerPairs = headerLines.map((line) => {
+      const separatorIndex = line.indexOf(':');
+      return [
+        line.slice(0, separatorIndex).trim(),
+        line.slice(separatorIndex + 1).trim(),
+      ];
+    });
+    expect(headerPairs).toEqual([
+      [
+        'Content-Security-Policy',
+        "default-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+      ],
+      ['X-Content-Type-Options', 'nosniff'],
+      ['X-Frame-Options', 'DENY'],
+      ['Referrer-Policy', 'no-referrer'],
+    ]);
+  });
+
   it('points Workers static assets at dist and binds the custom domain', () => {
     const config = JSON.parse(readFileSync('wrangler.jsonc', 'utf8'));
     expect(config.name).toBe('vital-courier');
