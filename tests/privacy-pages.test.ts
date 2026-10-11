@@ -32,6 +32,7 @@ const pages = [
     title: 'Privacy Policy',
     opensInNewTab: ' (opens in a new tab)',
     warning: 'post health information',
+    workersLogsDisclosure: 'today they record nothing',
     headings: [
       'What Vital Courier reads',
       'Reading in the background',
@@ -57,6 +58,7 @@ const pages = [
     title: 'Política de Privacidade',
     opensInNewTab: ' (abre em uma nova aba)',
     warning: 'publique informações de saúde',
+    workersLogsDisclosure: 'hoje não registram nada',
     headings: [
       'O que o Vital Courier lê',
       'Leitura em segundo plano',
@@ -223,6 +225,12 @@ describe.each(pages)('$file', (page) => {
 
   it('warns not to post health information in an issue', () => {
     expect(load(page.file).text).toContain(page.warning);
+  });
+
+  it('says Workers Logs and Traces record nothing for a static site', () => {
+    const { text } = load(page.file);
+    expect(text).toContain('Workers Logs');
+    expect(text).toContain(page.workersLogsDisclosure);
   });
 
   it('has a canonical link and both hreflang alternates', () => {

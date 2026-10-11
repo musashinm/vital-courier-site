@@ -91,7 +91,7 @@ Cloudflare Workers Builds is connected to this repo and deploys `main` with `npm
 
 Pull requests get no preview deploys. Preview builds are turned off in the Workers Builds settings in the Cloudflare dashboard, which live outside this repo. Separately, `wrangler.jsonc` sets `workers_dev` and `preview_urls` to `false`, so the Worker has no `workers.dev` or preview URL and the site is served only on its custom domain. To see a change before it merges, run `npm run build && npm run preview`.
 
-`wrangler.jsonc` turns on Workers Logs and Traces at full sampling. The site has no Worker script yet, and requests that only hit static assets may not show up in either.
+`wrangler.jsonc` turns on Workers Logs and Traces at full sampling. The site has no Worker script, so static-asset requests don't invoke one and neither records anything; the privacy policy says so, and a Worker script would need that paragraph updated.
 
 ## Questions about the policy
 
