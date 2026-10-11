@@ -156,4 +156,60 @@ describe('dependabot config', () => {
       'update-types': ['version-update:semver-major'],
     });
   });
+
+  it('ignores @types/node major bumps to follow .nvmrc', () => {
+    expect(byEcosystem('npm')?.ignore).toContainEqual({
+      'dependency-name': '@types/node',
+      'update-types': ['version-update:semver-major'],
+    });
+  });
+});
+
+describe('npm lockfile', () => {
+  const FIXED_PARSER_VERSION = '7.1.6';
+  const PARSER_PACKAGE = 'postcss-selector-parser';
+  const TYPOGRAPHY_PACKAGE = '@tailwindcss/typography';
+  const lockfile = JSON.parse(readFileSync('package-lock.json', 'utf8'));
+  const lockedPackages: Record<string, YamlRecord> = lockfile.packages;
+
+  // Compares plain major.minor.patch versions numerically; no semver dependency.
+  function compareVersions(left: string, right: string): number {
+    const leftParts = left.split('.').map(Number);
+    const rightParts = right.split('.').map(Number);
+    for (let index = 0; index < 3; index += 1) {
+      const difference = (leftParts[index] ?? 0) - (rightParts[index] ?? 0);
+      if (difference !== 0) return difference;
+    }
+    return 0;
+  }
+
+  it('locks every postcss-selector-parser at 7.1.6 or later', () => {
+    const parserEntries = Object.entries(lockedPackages).filter(([path]) =>
+      path.endsWith(`node_modules/${PARSER_PACKAGE}`),
+    );
+    expect(parserEntries.length).toBeGreaterThan(0);
+    for (const [, entry] of parserEntries) {
+      expect(
+        compareVersions(entry.version as string, FIXED_PARSER_VERSION),
+      ).toBeGreaterThanOrEqual(0);
+    }
+  });
+
+  it('overrides the typography parser while typography asks for an older one', () => {
+    const typographyDependencies = lockedPackages[
+      `node_modules/${TYPOGRAPHY_PACKAGE}`
+    ]?.dependencies as Record<string, string> | undefined;
+    const declaredSpec = typographyDependencies?.[PARSER_PACKAGE];
+    // Anything but a plain x.y.z counts as needing the override (fail-safe).
+    const declaresFixedVersion =
+      declaredSpec !== undefined &&
+      /^\d+\.\d+\.\d+$/.test(declaredSpec) &&
+      compareVersions(declaredSpec, FIXED_PARSER_VERSION) >= 0;
+    if (declaredSpec === undefined || declaresFixedVersion) return;
+
+    const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
+    expect(packageJson.overrides?.[TYPOGRAPHY_PACKAGE]?.[PARSER_PACKAGE]).toBe(
+      FIXED_PARSER_VERSION,
+    );
+  });
 });
