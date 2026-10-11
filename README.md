@@ -14,6 +14,7 @@ Source for [vitalcourier.app](https://vitalcourier.app), the privacy policy site
 
 - Node 24, from `.nvmrc`. The `engines` field in `package.json` allows `^22.22.3 || ^24.16.0 || >=26.3.0`.
 - npm. The `allowScripts` field in `package.json` approves install scripts for `esbuild` and `workerd` only.
+- `overrides` in `package.json` forces `postcss-selector-parser` 7.1.6 under `@tailwindcss/typography`, whose 0.5.20 release pins the vulnerable 6.0.10 (GHSA-rj75-hqrm-r3gf). Remove it once a published typography release depends on 7.1.6 or later, then regenerate the lockfile. `npm ci` honors it.
 - Docker (optional), only for the container workflow in [Docker](#docker).
 
 ## Getting started
