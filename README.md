@@ -55,12 +55,14 @@ That builds the image and starts the dev server at http://localhost:4321/privacy
 
 About the setup in `Dockerfile` and `compose.yaml`:
 
-- The base image is Debian (`node:24.21.0-bookworm-slim`), not Alpine, because workerd, which `npm run preview` runs on, has no musl build. The tag matches `.tool-versions`, so bump both together.
+- The base image is Debian (`node:24.21.0-bookworm-slim`), not Alpine, because workerd, which `npm run preview` runs on, has no musl build. It runs Node 24 to match `.nvmrc`. The digest after the tag pins the exact image, and Dependabot proposes a refreshed digest or a newer 24.x each week.
 - `astro dev` runs with `--ignore-lock`. Astro's lock file in `.astro/` is shared with the host through the bind mount, and the image has no `ps`, so Astro would treat any live PID in a stale lock as a running server and refuse to start. The cost is that `astro dev stop`, `status` and `logs` can't see the container's server.
 
 ## CI
 
-`.github/workflows/ci.yml` runs on every pull request and on pushes to `main`. It runs `npm ci`, then `npm run check`, `npm run lint`, `npm run format:check` and `npm test`, on the Node version in `.nvmrc`. A ruleset on `main`, set in the GitHub repo settings rather than in this repo, only accepts squash merges from a PR whose `verify` job passed.
+`.github/workflows/ci.yml` runs on every pull request and on pushes to `main`. It runs `npm ci`, then `npm run check`, `npm run lint`, `npm run format:check` and `npm test`, on the Node version in `.nvmrc`. A ruleset on `main`, set in the GitHub repo settings rather than in this repo, only accepts squash merges from a PR whose `verify` job passed. Both actions are pinned to commit SHAs, and checkout doesn't keep the token in the git config (`persist-credentials: false`).
+
+`.github/dependabot.yml` checks the Actions, the Docker image and npm weekly. Version-update PRs wait 7 days after a release; security updates are not delayed. npm minor and patch bumps arrive as one grouped PR; majors come one per PR. Node majors are ignored for the Docker image. Its PRs need the same review or an admin merge as any other.
 
 ## Project layout
 

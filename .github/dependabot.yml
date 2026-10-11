@@ -1,0 +1,28 @@
+version: 2
+updates:
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    cooldown:
+      default-days: 7
+  - package-ecosystem: 'docker'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    cooldown:
+      default-days: 7
+    ignore:
+      # .nvmrc pins Node 24; a major bump needs it changed by hand.
+      - dependency-name: 'node'
+        update-types: ['version-update:semver-major']
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    cooldown:
+      default-days: 7
+    groups:
+      npm-minor-and-patch:
+        patterns: ['*']
+        update-types: ['minor', 'patch']
