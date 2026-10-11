@@ -7,7 +7,7 @@ Source for [vitalcourier.app](https://vitalcourier.app), the privacy policy site
 - Astro 7, built to static HTML (`build.format: 'file'`, no trailing slashes). The policy pages ship no client-side JavaScript.
 - Both policies are Markdown files in a content collection (`src/content/privacy/`), rendered through one shared layout.
 - Tailwind CSS 4 through `@tailwindcss/vite`, with `@tailwindcss/typography` for the policy text.
-- Cloudflare Workers static assets serve `dist/`. There is no Worker script, and `public/_redirects` handles the root redirect.
+- Cloudflare Workers static assets serve `dist/`. There is no Worker script, and `public/_redirects` handles the root redirect. `public/_headers` sets the Content-Security-Policy and the other security headers on every static response, so a new external resource, such as a web font, needs its source added to the CSP or the browser blocks it.
 - Vitest reads the built HTML in `dist/` with `node-html-parser`, without a browser.
 
 ## Prerequisites
@@ -27,16 +27,16 @@ To run it with nothing on the host but Docker, see [Docker](#docker).
 
 ## Scripts
 
-| Script                 | What it runs                                                                                                    |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `npm run dev`          | `astro dev`, the dev server                                                                                     |
-| `npm run build`        | `astro build`, which writes the site to `dist/`                                                                 |
-| `npm run preview`      | `wrangler dev`, which serves `dist/` the way Cloudflare does, `_redirects` included. Run `npm run build` first. |
-| `npm run check`        | `astro check`, which type-checks `.astro` and `.ts` files                                                       |
-| `npm run lint`         | `eslint .`                                                                                                      |
-| `npm run format`       | `prettier --write .`                                                                                            |
-| `npm run format:check` | `prettier --check .`                                                                                            |
-| `npm test`             | `TZ=America/Los_Angeles astro build && vitest run`. The time zone catches dates that print a day early.         |
+| Script                 | What it runs                                                                                                                   |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `npm run dev`          | `astro dev`, the dev server                                                                                                    |
+| `npm run build`        | `astro build`, which writes the site to `dist/`                                                                                |
+| `npm run preview`      | `wrangler dev`, which serves `dist/` the way Cloudflare does, `_redirects` and `_headers` included. Run `npm run build` first. |
+| `npm run check`        | `astro check`, which type-checks `.astro` and `.ts` files                                                                      |
+| `npm run lint`         | `eslint .`                                                                                                                     |
+| `npm run format`       | `prettier --write .`                                                                                                           |
+| `npm run format:check` | `prettier --check .`                                                                                                           |
+| `npm test`             | `TZ=America/Los_Angeles astro build && vitest run`. The time zone catches dates that print a day early.                        |
 
 ## Docker
 
@@ -49,7 +49,7 @@ docker compose up
 That builds the image and starts the dev server at http://localhost:4321/privacy. Edits on the host reload the page through the bind mount. The first start runs `npm ci` into a named Docker volume, which is the slow part. Later starts skip it, and it runs again on its own when `package-lock.json` changes.
 
 - Both ports are published on `127.0.0.1` only, so other machines on your network can't reach the dev server, which can serve any file in the bind-mounted tree. To test from a phone on the same network, change the web mapping to `'4321:4321'` and restart with `docker compose up`. When you're done, put the mapping back and run `docker compose up` again, because the running container keeps the LAN-wide mapping until Compose recreates it. Don't commit the changed mapping.
-- `docker compose up preview` builds `dist/` and serves it through Wrangler at http://localhost:8787, `_redirects` included.
+- `docker compose up preview` builds `dist/` and serves it through Wrangler at http://localhost:8787, `_redirects` and `_headers` included.
 - One-off scripts (`check`, `lint`, `format:check`, `test`) run as `docker compose run --rm web npm run <script>`, for example `docker compose run --rm web npm test`.
 - To start over from a clean install, remove the volume with `docker compose --profile preview down --volumes`. The profile flag stops `preview` too, which would otherwise keep the volume in use.
 
@@ -74,7 +74,7 @@ src/
   i18n/              ui.ts, the interface strings in both languages
   markdown/          external-links.ts, a rehype plugin that opens links in a new tab
   styles/            global.css
-public/              _redirects, favicons and the logo lockups, copied into dist/ as they are
+public/              _redirects, _headers, favicons and the logo lockups, copied into dist/ as they are
 tests/               Vitest suites that read the built HTML and the deploy config
 wrangler.jsonc       Cloudflare Worker config
 Dockerfile           Dev-only image for the Docker workflow
