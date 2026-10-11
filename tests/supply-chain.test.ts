@@ -156,4 +156,70 @@ describe('dependabot config', () => {
       'update-types': ['version-update:semver-major'],
     });
   });
+
+  it('ignores @types/node major bumps to follow .nvmrc', () => {
+    expect(byEcosystem('npm')?.ignore).toContainEqual({
+      'dependency-name': '@types/node',
+      'update-types': ['version-update:semver-major'],
+    });
+  });
+});
+
+describe('npm lockfile', () => {
+  const FIXED_PARSER_VERSION = '7.1.6';
+  const PARSER_PACKAGE = 'postcss-selector-parser';
+  const TYPOGRAPHY_PACKAGE = '@tailwindcss/typography';
+  const lockfile = JSON.parse(readFileSync('package-lock.json', 'utf8'));
+  const lockedPackages: Record<string, YamlRecord> = lockfile.packages;
+
+  // Compares plain major.minor.patch versions numerically; no semver dependency.
+  function compareVersions(left: string, right: string): number {
+    const leftParts = left.split('.').map(Number);
+    const rightParts = right.split('.').map(Number);
+    for (let index = 0; index < 3; index += 1) {
+      const difference = (leftParts[index] ?? 0) - (rightParts[index] ?? 0);
+      if (difference !== 0) return difference;
+    }
+    return 0;
+  }
+
+  it('locks every postcss-selector-parser at 7.1.6 or later', () => {
+    const parserEntries = Object.entries(lockedPackages).filter(([path]) =>
+      path.endsWith(`node_modules/${PARSER_PACKAGE}`),
+    );
+    expect(parserEntries.length).toBeGreaterThan(0);
+    for (const [, entry] of parserEntries) {
+      expect(
+        compareVersions(entry.version as string, FIXED_PARSER_VERSION),
+      ).toBeGreaterThanOrEqual(0);
+    }
+  });
+
+  it('overrides the typography parser while typography asks for an older one', () => {
+    // If typography is ever dropped or stops depending on the parser, update
+    // this test together with the override.
+    const typographyEntry =
+      lockedPackages[`node_modules/${TYPOGRAPHY_PACKAGE}`];
+    expect(typographyEntry).toBeDefined();
+    const typographyDependencies = typographyEntry?.dependencies as
+      Record<string, string> | undefined;
+    const declaredSpec = typographyDependencies?.[PARSER_PACKAGE];
+    expect(declaredSpec).toBeDefined();
+
+    // Minimum version of a plain x.y.z, or one prefixed by ^, ~, >= or =.
+    // Anything else (ranges, prereleases, tags) is unparseable and counts as
+    // needing the override (fail-safe).
+    const minimumVersion = /^(?:\^|~|>=|=)?\s*(\d+\.\d+\.\d+)$/.exec(
+      declaredSpec as string,
+    )?.[1];
+    const declaresFixedVersion =
+      minimumVersion !== undefined &&
+      compareVersions(minimumVersion, FIXED_PARSER_VERSION) >= 0;
+    if (declaresFixedVersion) return;
+
+    const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
+    expect(packageJson.overrides?.[TYPOGRAPHY_PACKAGE]?.[PARSER_PACKAGE]).toBe(
+      FIXED_PARSER_VERSION,
+    );
+  });
 });

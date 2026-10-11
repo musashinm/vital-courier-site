@@ -14,6 +14,7 @@ Source for [vitalcourier.app](https://vitalcourier.app), the privacy policy site
 
 - Node 24, from `.nvmrc`. The `engines` field in `package.json` allows `^22.22.3 || ^24.16.0 || >=26.3.0`.
 - npm. The `allowScripts` field in `package.json` approves install scripts for `esbuild` and `workerd` only.
+- `overrides` in `package.json` forces `postcss-selector-parser` 7.1.6 under `@tailwindcss/typography`, whose 0.5.20 release pins the vulnerable 6.0.10 (GHSA-rj75-hqrm-r3gf). Remove it once a published typography release depends on 7.1.6 or later, then regenerate the lockfile. `npm ci` honors it.
 - Docker (optional), only for the container workflow in [Docker](#docker).
 
 ## Getting started
@@ -62,7 +63,7 @@ About the setup in `Dockerfile` and `compose.yaml`:
 
 `.github/workflows/ci.yml` runs on every pull request and on pushes to `main`. It runs `npm ci`, then `npm run check`, `npm run lint`, `npm run format:check` and `npm test`, on the Node version in `.nvmrc`. A ruleset on `main`, set in the GitHub repo settings rather than in this repo, only accepts squash merges from a PR whose `verify` job passed. Both actions are pinned to commit SHAs, and checkout doesn't keep the token in the git config (`persist-credentials: false`).
 
-`.github/dependabot.yml` checks the Actions, the Docker image and npm weekly. Version-update PRs wait 7 days after a release; security updates are not delayed. npm minor and patch bumps arrive as one grouped PR; majors come one per PR. Node majors are ignored for the Docker image. Its PRs need the same review or an admin merge as any other.
+`.github/dependabot.yml` checks the Actions, the Docker image and npm weekly. Version-update PRs wait 7 days after a release; security updates are not delayed. npm minor and patch bumps arrive as one grouped PR; majors come one per PR. Node majors are ignored for the Docker image, and `@types/node` majors too, because both follow `.nvmrc`. Its PRs need the same review or an admin merge as any other.
 
 ## Project layout
 

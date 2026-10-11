@@ -40,5 +40,10 @@
   "allowScripts": {
     "esbuild@0.28.2": true,
     "workerd@1.20261006.1": true
+  },
+  "overrides": {
+    "@tailwindcss/typography": {
+      "postcss-selector-parser": "7.1.6"
+    }
   }
 }
