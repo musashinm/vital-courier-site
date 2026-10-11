@@ -75,7 +75,7 @@ src/
   markdown/          external-links.ts, a rehype plugin that opens links in a new tab
   styles/            global.css
 public/              _redirects, _headers, favicons and the logo lockups, copied into dist/ as they are
-tests/               Vitest suites that read the built HTML and the deploy config
+tests/               Vitest suites that read the built HTML, the policy Markdown and the deploy config
 wrangler.jsonc       Cloudflare Worker config
 Dockerfile           Dev-only image for the Docker workflow
 compose.yaml         The web and preview services

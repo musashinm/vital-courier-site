@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { parse, type HTMLElement } from 'node-html-parser';
+import { allowedUrlPattern, normalizeUrl } from './allowed-urls';
 import { describe, expect, it } from 'vitest';
 
 const repoUrl = 'https://github.com/musashinm/vital-courier-site';
@@ -8,6 +9,16 @@ const githubPrivacyUrl =
 
 // Links whose every rel token is one of these point somewhere rather than load a resource, so the CSP never sees them.
 const navigationLinkRels = ['canonical', 'alternate'];
+
+// Elements that embed another document, submit data or change where relative URLs point. The policy needs none of them.
+const embeddingElements = [
+  'iframe',
+  'frame',
+  'object',
+  'embed',
+  'form',
+  'base',
+];
 
 const pages = [
   {
@@ -115,6 +126,31 @@ describe.each(pages)('$file', (page) => {
       .map((name) => name.toLowerCase());
     expect(attributeNames).not.toContain('style');
     expect(attributeNames.filter((name) => name.startsWith('on'))).toEqual([]);
+  });
+
+  it('has no elements that embed, submit or redirect', () => {
+    const root = load(page.file);
+    for (const tagName of embeddingElements)
+      expect(root.querySelectorAll(tagName)).toHaveLength(0);
+    const refreshingMetas = root
+      .querySelectorAll('meta')
+      .filter((meta) =>
+        Object.keys(meta.attributes).some(
+          (name) => name.toLowerCase() === 'http-equiv',
+        ),
+      );
+    expect(refreshingMetas).toHaveLength(0);
+  });
+
+  it('links only to http(s), mailto, fragments or same-origin paths', () => {
+    const root = load(page.file);
+    const urls = [
+      ...root.querySelectorAll('a').map((link) => link.getAttribute('href')),
+      ...root.querySelectorAll('img').map((image) => image.getAttribute('src')),
+    ].filter((url): url is string => url !== undefined);
+    expect(urls.length).toBeGreaterThan(0);
+    for (const url of urls)
+      expect(normalizeUrl(url)).toMatch(allowedUrlPattern);
   });
 
   it('loads styles and images only from its own origin', () => {
