@@ -4,10 +4,10 @@ Source for [vitalcourier.app](https://vitalcourier.app), the privacy policy site
 
 ## Stack
 
-- Astro 7, built to static HTML (`build.format: 'file'`, no trailing slashes). The policy pages ship no client-side JavaScript.
+- Astro 7, built to static HTML (`build.format: 'file'`, no trailing slashes). The policy pages ship no client-side JavaScript of their own. Cloudflare Web Analytics adds its beacon script at the edge, in live responses to browsers only.
 - Both policies are Markdown files in a content collection (`src/content/privacy/`), rendered through one shared layout.
 - Tailwind CSS 4 through `@tailwindcss/vite`, with `@tailwindcss/typography` for the policy text.
-- Cloudflare Workers static assets serve `dist/`. There is no Worker script, and `public/_redirects` handles the root redirect. `public/_headers` sets the Content-Security-Policy and the other security headers on every static response, so a new external resource, such as a web font, needs its source added to the CSP or the browser blocks it.
+- Cloudflare Workers static assets serve `dist/`. There is no Worker script, and `public/_redirects` handles the root redirect. `public/_headers` sets the Content-Security-Policy, HSTS and the other security headers on every static response. The only script the CSP allows is the Web Analytics beacon from `static.cloudflareinsights.com`, which reports to the site's own `/cdn-cgi/rum`. Any other new external resource, such as a web font, needs its source added to the CSP or the browser blocks it.
 - Vitest reads the built HTML in `dist/` with `node-html-parser`, without a browser.
 
 ## Prerequisites

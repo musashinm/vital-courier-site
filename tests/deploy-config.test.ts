@@ -145,6 +145,7 @@ describe('deploy config', () => {
   });
 
   // Header pairs stay in an ordered list so a duplicate line fails the test; Cloudflare would join duplicates with a comma.
+  // script-src ends the beacon path with a slash because Cloudflare injects a versioned URL under it, and only a slash-ended path matches longer paths.
   it('ships a _headers file with the security headers on every path', () => {
     const lines = readFileSync('dist/_headers', 'utf8')
       .split('\n')
@@ -162,11 +163,12 @@ describe('deploy config', () => {
     expect(headerPairs).toEqual([
       [
         'Content-Security-Policy',
-        "default-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+        "default-src 'none'; script-src https://static.cloudflareinsights.com/beacon.min.js/; style-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
       ],
       ['X-Content-Type-Options', 'nosniff'],
       ['X-Frame-Options', 'DENY'],
       ['Referrer-Policy', 'no-referrer'],
+      ['Strict-Transport-Security', 'max-age=31536000'],
     ]);
   });
 
