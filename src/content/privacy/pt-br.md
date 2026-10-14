@@ -1,6 +1,6 @@
 ---
 title: Política de Privacidade
-updated: 2026-10-11
+updated: 2026-10-14
 ---
 
 O Vital Courier exporta seus dados do Apple Saúde para uma pasta que você escolhe. Ele não tem conta nem servidor, e não envia nada ao desenvolvedor nem a mais ninguém.
@@ -14,7 +14,14 @@ Com a sua permissão, o Vital Courier lê quatro tipos de dados do Apple Saúde:
 - Peso
 - Sono
 
-Ele pede só acesso de leitura e nunca grava nem altera seus dados do Saúde. Quando o iOS perguntar, você escolhe quais dos quatro liberar.
+Se você ligar o Monitoramento do ciclo nos Ajustes do aplicativo, ele também lê mais dois:
+
+- Fluxo menstrual, incluindo se você marcou um dia como início da menstruação
+- Sangramento de escape
+
+O Monitoramento do ciclo fica desligado até você ligá-lo.
+
+Ele pede só acesso de leitura e nunca grava nem altera seus dados do Saúde. Quando o iOS perguntar, você escolhe quais deles liberar.
 
 De cada registro, ele obtém o identificador, o horário de início e de fim, o valor, o nome do aplicativo ou dispositivo que fez o registro, o nome do aparelho quando o Saúde tem essa informação e qualquer detalhe extra que o Saúde guarda junto com o registro (os metadados, como a indicação de que um valor foi digitado à mão).
 
@@ -45,7 +52,7 @@ O Vital Courier não usa o iCloud nem o CloudKit para guardar ou sincronizar nad
 
 ## Como guardar e apagar dados
 
-Nos Ajustes do aplicativo, Apagar cópia local apaga a cópia local dos seus registros do Saúde. Isso não mexe nos seus dados do Apple Saúde nem nos arquivos já exportados, e suas configurações, o histórico de exportações e a pasta escolhida continuam. A próxima execução que puder ler os dados do Saúde lê de novo os quatro tipos de dados.
+Nos Ajustes do aplicativo, Apagar cópia local apaga a cópia local dos seus registros do Saúde. Isso não mexe nos seus dados do Apple Saúde nem nos arquivos já exportados, e suas configurações, o histórico de exportações e a pasta escolhida continuam. A próxima execução que puder ler os dados do Saúde lê de novo os tipos de dados que você ligou.
 
 Para apagar arquivos exportados, apague-os no aplicativo Arquivos ou no seu serviço de armazenamento.
 
@@ -53,10 +60,12 @@ Apagar o Vital Courier do iPhone apaga tudo o que ele guarda no próprio armazen
 
 ## Como desligar o acesso
 
-Você pode desligar o acesso do Vital Courier a qualquer um dos quatro tipos de dados, ou a todos, quando quiser:
+Você pode desligar o acesso do Vital Courier a qualquer um desses tipos de dados, ou a todos, quando quiser:
 
 - No aplicativo Saúde: toque na sua foto de perfil, depois em Apps e depois em Vital Courier
 - Nos Ajustes do iPhone: Saúde, depois Acesso a Dados e Dispositivos, depois Vital Courier
+
+Desligar o Monitoramento do ciclo nos Ajustes do aplicativo faz o Vital Courier parar de ler Fluxo menstrual e Sangramento de escape. Os arquivos já exportados e a cópia local continuam. Apagar cópia local apaga a cópia local.
 
 Para parar as exportações para uma pasta, escolha outra pasta no Vital Courier. Se você apagar a pasta no aplicativo Arquivos, o Vital Courier não consegue mais gravar nela e não a recria.
 
