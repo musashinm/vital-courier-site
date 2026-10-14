@@ -1,6 +1,6 @@
 ---
 title: Privacy Policy
-updated: 2026-10-11
+updated: 2026-10-14
 ---
 
 Vital Courier exports your Apple Health data to a folder you choose. It has no account and no server, and it sends nothing to its developer or to anyone else.
@@ -14,7 +14,14 @@ With your permission, Vital Courier reads four kinds of data from Apple Health:
 - Body Weight
 - Sleep
 
-It asks for read access only and never writes to or changes your Health data. When iOS asks, you choose which of the four to allow.
+If you turn on Cycle tracking in Vital Courier's Settings, it also reads two more:
+
+- Menstrual Flow, including whether you marked a day as the start of a period
+- Spotting
+
+Cycle tracking is off until you turn it on.
+
+It asks for read access only and never writes to or changes your Health data. When iOS asks, you choose which of these to allow.
 
 For each reading, it gets the reading's identifier, its start and end time, its value, the name of the app or device that recorded it, the device name when Health has one, and any extra details Health stores with the reading (its metadata, such as whether a value was entered by hand).
 
@@ -45,7 +52,7 @@ Vital Courier doesn't use iCloud or CloudKit to store or sync any of this. It ma
 
 ## Keeping and deleting data
 
-In Settings, Clear local copy deletes the local copy of your Health readings. It doesn't touch your data in Apple Health or the files already exported, and your settings, export history and folder choice stay. The next run that can read Health data reads the four data types from Health again.
+In Settings, Clear local copy deletes the local copy of your Health readings. It doesn't touch your data in Apple Health or the files already exported, and your settings, export history and folder choice stay. The next run that can read Health data reads the data types you have turned on from Health again.
 
 To delete exported files, delete them in the Files app or in your storage provider.
 
@@ -53,10 +60,12 @@ Deleting Vital Courier from your iPhone deletes everything it keeps in its own s
 
 ## Turning off access
 
-You can turn off Vital Courier's access to any or all of the four data types at any time:
+You can turn off Vital Courier's access to any or all of these data types at any time:
 
 - In the Health app: tap your profile picture, then Apps, then Vital Courier
 - In Settings: Health, then Data Access & Devices, then Vital Courier
+
+Turning off Cycle tracking in Vital Courier's Settings stops it reading Menstrual Flow and Spotting. Files already exported and the local copy stay. Clear local copy deletes the local copy.
 
 To stop exports to a folder, pick a different folder in Vital Courier. If you delete the folder in Files, Vital Courier can no longer write to it and doesn't recreate it.
 
