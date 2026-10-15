@@ -7,21 +7,14 @@ Vital Courier exports your Apple Health data to a folder you choose. It has no a
 
 ## What Vital Courier reads
 
-With your permission, Vital Courier reads four kinds of data from Apple Health:
+With your permission, Vital Courier reads health data from Apple Health. When iOS asks, you choose which data types to allow and how much of your past data it can read, and Vital Courier reads only what you allow. It asks for read access only and never writes to or changes your Health data.
 
-- Steps
-- Resting Heart Rate
-- Body Weight
-- Sleep
-
-If you turn on Cycle tracking in Vital Courier's Settings, it also reads two more:
+If you turn on Cycle tracking in Vital Courier's Settings, it also reads two cycle data types:
 
 - Menstrual Flow, including whether you marked a day as the start of a period
 - Spotting
 
 Cycle tracking is off until you turn it on.
-
-It asks for read access only and never writes to or changes your Health data. When iOS asks, you choose which of these to allow.
 
 For each reading, it gets the reading's identifier, its start and end time, its value, the name of the app or device that recorded it, the device name when Health has one, and any extra details Health stores with the reading (its metadata, such as whether a value was entered by hand).
 
@@ -60,7 +53,7 @@ Deleting Vital Courier from your iPhone deletes everything it keeps in its own s
 
 ## Turning off access
 
-You can turn off Vital Courier's access to any or all of these data types at any time:
+You can turn off Vital Courier's access to any or all of the data types you allowed, at any time:
 
 - In the Health app: tap your profile picture, then Apps, then Vital Courier
 - In Settings: Health, then Data Access & Devices, then Vital Courier
