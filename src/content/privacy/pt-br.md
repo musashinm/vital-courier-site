@@ -1,6 +1,6 @@
 ---
 title: Política de Privacidade
-updated: 2026-10-14
+updated: 2026-10-15
 ---
 
 O Vital Courier exporta seus dados do Apple Saúde para uma pasta que você escolhe. Ele não tem conta nem servidor, e não envia nada ao desenvolvedor nem a mais ninguém.
@@ -12,7 +12,7 @@ Com a sua permissão, o Vital Courier lê dados de saúde do Apple Saúde. Quand
 Se você ligar o Monitoramento do ciclo nos Ajustes do aplicativo, ele também lê dois tipos de dados do ciclo:
 
 - Fluxo menstrual, incluindo se você marcou um dia como início da menstruação
-- Sangramento de escape
+- Sangramento
 
 O Monitoramento do ciclo fica desligado até você ligá-lo.
 
@@ -58,7 +58,7 @@ Você pode desligar o acesso do Vital Courier a qualquer um dos tipos de dados q
 - No aplicativo Saúde: toque na sua foto de perfil, depois em Apps e depois em Vital Courier
 - Nos Ajustes do iPhone: Saúde, depois Acesso a Dados e Dispositivos, depois Vital Courier
 
-Desligar o Monitoramento do ciclo nos Ajustes do aplicativo faz o Vital Courier parar de ler Fluxo menstrual e Sangramento de escape. Os arquivos já exportados e a cópia local continuam. Apagar cópia local apaga a cópia local.
+Desligar o Monitoramento do ciclo nos Ajustes do aplicativo faz o Vital Courier parar de ler Fluxo menstrual e Sangramento. Os arquivos já exportados e a cópia local continuam. Apagar cópia local apaga a cópia local.
 
 Para parar as exportações para uma pasta, escolha outra pasta no Vital Courier. Se você apagar a pasta no aplicativo Arquivos, o Vital Courier não consegue mais gravar nela e não a recria.
 
