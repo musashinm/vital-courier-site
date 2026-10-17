@@ -40,6 +40,7 @@ Além dos arquivos exportados, o Vital Courier guarda só o que precisa para fun
 - O controle de quais registros já foram exportados
 - Um histórico das exportações
 - A permissão salva para gravar na pasta escolhida
+- Uma anotação de que você fez uma contribuição, guardada só para mostrar um agradecimento
 
 O Vital Courier não usa o iCloud nem o CloudKit para guardar ou sincronizar nada disso. Ele marca a cópia local dos seus dados do Saúde, o controle das exportações, o histórico de exportações e outros dados de funcionamento para ficarem fora dos backups do iPhone. A Apple trata isso como um pedido e não garante a exclusão. A pasta escolhida, outras configurações e as mensagens pendentes de erro de configuração ou de proteção de arquivos podem entrar em um backup do iPhone.
 

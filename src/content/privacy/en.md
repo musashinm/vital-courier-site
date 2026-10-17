@@ -40,6 +40,7 @@ Apart from the export files, Vital Courier saves only what it needs to work, and
 - A record of which readings were already exported
 - A history of export runs
 - The saved permission to write to your chosen folder
+- A note of whether you have tipped, kept only to show a thank-you
 
 Vital Courier doesn't use iCloud or CloudKit to store or sync any of this. It marks its local Health-data copy, export records, export history and other working data to be excluded from iPhone backups. Apple treats this as a request and doesn't guarantee it. The chosen folder and other settings, along with any pending setup or file-protection error messages, may be included in an iPhone backup.
 
