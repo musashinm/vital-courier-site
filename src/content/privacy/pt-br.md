@@ -1,6 +1,6 @@
 ---
 title: Política de Privacidade
-updated: 2026-10-15
+updated: 2026-10-17
 ---
 
 O Vital Courier exporta seus dados do Apple Saúde para uma pasta que você escolhe. Ele não tem conta nem servidor, e não envia nada ao desenvolvedor nem a mais ninguém.
@@ -40,6 +40,7 @@ Além dos arquivos exportados, o Vital Courier guarda só o que precisa para fun
 - O controle de quais registros já foram exportados
 - Um histórico das exportações
 - A permissão salva para gravar na pasta escolhida
+- Uma anotação de que você fez uma contribuição, guardada só para mostrar um agradecimento
 
 O Vital Courier não usa o iCloud nem o CloudKit para guardar ou sincronizar nada disso. Ele marca a cópia local dos seus dados do Saúde, o controle das exportações, o histórico de exportações e outros dados de funcionamento para ficarem fora dos backups do iPhone. A Apple trata isso como um pedido e não garante a exclusão. A pasta escolhida, outras configurações e as mensagens pendentes de erro de configuração ou de proteção de arquivos podem entrar em um backup do iPhone.
 
@@ -61,6 +62,10 @@ Você pode desligar o acesso do Vital Courier a qualquer um dos tipos de dados q
 Desligar o Monitoramento do ciclo nos Ajustes do aplicativo faz o Vital Courier parar de ler Fluxo menstrual e Sangramento. Os arquivos já exportados e a cópia local continuam. Apagar cópia local apaga a cópia local.
 
 Para parar as exportações para uma pasta, escolha outra pasta no Vital Courier. Se você apagar a pasta no aplicativo Arquivos, o Vital Courier não consegue mais gravar nela e não a recria.
+
+## Contribuições
+
+As contribuições são opcionais e passam pela compra dentro do app da Apple (In-App Purchase). O Vital Courier não recebe nenhuma informação sobre quem contribui. O aplicativo guarda só uma anotação no seu iPhone de que você contribuiu, para mostrar um agradecimento.
 
 ## O que nunca é coletado
 

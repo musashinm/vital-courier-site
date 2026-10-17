@@ -1,6 +1,6 @@
 ---
 title: Privacy Policy
-updated: 2026-10-14
+updated: 2026-10-17
 ---
 
 Vital Courier exports your Apple Health data to a folder you choose. It has no account and no server, and it sends nothing to its developer or to anyone else.
@@ -40,6 +40,7 @@ Apart from the export files, Vital Courier saves only what it needs to work, and
 - A record of which readings were already exported
 - A history of export runs
 - The saved permission to write to your chosen folder
+- A note of whether you have tipped, kept only to show a thank-you
 
 Vital Courier doesn't use iCloud or CloudKit to store or sync any of this. It marks its local Health-data copy, export records, export history and other working data to be excluded from iPhone backups. Apple treats this as a request and doesn't guarantee it. The chosen folder and other settings, along with any pending setup or file-protection error messages, may be included in an iPhone backup.
 
@@ -61,6 +62,10 @@ You can turn off Vital Courier's access to any or all of the data types you allo
 Turning off Cycle tracking in Vital Courier's Settings stops it reading Menstrual Flow and Spotting. Files already exported and the local copy stay. Clear local copy deletes the local copy.
 
 To stop exports to a folder, pick a different folder in Vital Courier. If you delete the folder in Files, Vital Courier can no longer write to it and doesn't recreate it.
+
+## Tips
+
+Tips are optional and go through Apple's In-App Purchase. Vital Courier receives no information about the person who tips. The app keeps only a note on your iPhone that you tipped, so it can show a thank-you.
 
 ## What is never collected
 

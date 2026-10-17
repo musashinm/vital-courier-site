@@ -4,8 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { pathProperties, svgProperties } from '../src/icons/external-link';
 
 const WORD_JOINER = '\u2060';
-// The current policy has eleven sections; a deliberate section edit should update this.
-const SECTION_COUNT = 11;
+// The current policy has twelve sections; a deliberate section edit should update this.
+const SECTION_COUNT = 12;
 // History, Cloudflare's privacy policy, issues, GitHub privacy statement and the footer GitHub link.
 const NEW_TAB_LINK_COUNT = 5;
 
