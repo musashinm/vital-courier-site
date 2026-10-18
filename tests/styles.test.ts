@@ -59,16 +59,42 @@ describe('built CSS for the home page', () => {
     expect(builtCss()).toMatch(/\.home-nav\{[^}]*position:sticky[^}]*top:0/);
   });
 
-  it('offsets fragment targets by 152, 92 and 100 px', () => {
+  it('offsets fragment targets by 152, 92 and 100 px on the home page only', () => {
     const css = builtCss();
     for (const offset of ['152px', '92px', '100px']) {
       expect(css).toMatch(
-        new RegExp(`html\\{[^}]*scroll-padding-top:${offset}`),
+        new RegExp(
+          `html:has\\(\\.home-nav\\)\\{[^}]*scroll-padding-top:${offset}`,
+        ),
       );
       expect(css).toMatch(
-        new RegExp(`#main-content,#ios-app\\{[^}]*scroll-margin-top:${offset}`),
+        new RegExp(`#ios-app,\\.home-main\\{[^}]*scroll-margin-top:${offset}`),
       );
     }
+  });
+
+  it('leaves the policy pages without a home menu offset', () => {
+    const css = builtCss();
+    expect(css).not.toMatch(/(?:^|[},])html\{[^}]*scroll-padding-top/);
+    expect(css).not.toMatch(/#main-content[^{]*\{[^}]*scroll-margin-top/);
+  });
+
+  it('keeps the Markdown stage at 680px and the frame on soft', () => {
+    const css = builtCss();
+    expect(css).not.toMatch(/\.shot--note \.stage\{[^}]*min-height/);
+    expect(css).toMatch(/\.note-frame\{[^}]*background:var\(--vc-soft\)/);
+  });
+
+  it('places the philosophy heading in columns 1 to 7 above the proofs', () => {
+    const css = builtCss();
+    expect(css).toMatch(
+      /\.philosophy>:not\(\.proofs\)\{[^}]*grid-column:1\/span 7/,
+    );
+    expect(css).toMatch(/\.philosophy>\.proofs\{[^}]*grid-column:1\/-1/);
+  });
+
+  it('keeps the phone shadow out of the runtime token block', () => {
+    expect(builtCss()).not.toContain('--home-phone-shadow');
   });
 
   it('sets no overflow on the ancestors of the sticky menu', () => {

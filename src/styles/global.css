@@ -123,13 +123,6 @@
   --home-delay-cue-compact: 1520ms;
   --home-delay-cue-sm: 1940ms;
   --home-line-travel: 110%;
-  --home-phone-shadow: 0 24px 64px rgb(28 27 34 / 0.12);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --home-phone-shadow: 0 24px 64px rgb(0 0 0 / 0.4);
-  }
 }
 
 @theme inline {
@@ -533,29 +526,29 @@
   }
 }
 
-/* Home page: fragment targets sit below the sticky menu (136 + 16, 76 + 16, 84 + 16). */
-html {
+/* Home page only (policy pages have no sticky menu): fragment targets sit below the sticky menu (136 + 16, 76 + 16, 84 + 16). */
+html:has(.home-nav) {
   scroll-padding-top: 152px;
 }
-#main-content,
-#ios-app {
+#ios-app,
+.home-main {
   scroll-margin-top: 152px;
 }
 @media (min-width: 40rem) {
-  html {
+  html:has(.home-nav) {
     scroll-padding-top: 92px;
   }
-  #main-content,
-  #ios-app {
+  #ios-app,
+  .home-main {
     scroll-margin-top: 92px;
   }
 }
 @media (min-width: 64rem) {
-  html {
+  html:has(.home-nav) {
     scroll-padding-top: 100px;
   }
-  #main-content,
-  #ios-app {
+  #ios-app,
+  .home-main {
     scroll-margin-top: 100px;
   }
 }
@@ -689,7 +682,12 @@ html {
   width: min(280px, calc(100vw - 80px));
   height: auto;
   border-radius: var(--radius-home-phone);
-  box-shadow: var(--home-phone-shadow);
+  box-shadow: 0 24px 64px rgb(28 27 34 / 0.12);
+}
+@media (prefers-color-scheme: dark) {
+  .phone-capture {
+    box-shadow: 0 24px 64px rgb(0 0 0 / 0.4);
+  }
 }
 .shot--note .stage {
   padding: 24px 12px;
@@ -699,7 +697,7 @@ html {
   overflow: hidden;
   border: 1px solid var(--vc-border);
   border-radius: var(--radius-home-note);
-  background: var(--vc-canvas);
+  background: var(--vc-soft);
 }
 .note-frame__bar {
   display: flex;
@@ -991,7 +989,6 @@ html {
   }
   .shot--note .stage {
     grid-column: 5 / span 8;
-    min-height: 570px;
   }
   .note-frame {
     max-width: 760px;
@@ -1002,7 +999,16 @@ html {
     line-height: var(--text-home-code--line-height);
   }
   .philosophy {
+    display: grid;
     max-width: none;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 32px;
+  }
+  .philosophy > :not(.proofs) {
+    grid-column: 1 / span 7;
+  }
+  .philosophy > .proofs {
+    grid-column: 1 / -1;
   }
   .proofs {
     display: grid;
