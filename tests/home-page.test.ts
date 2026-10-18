@@ -327,15 +327,16 @@ describe.each(PAGE_EXPECTATIONS)('$file home page', (page) => {
 
   it('shows the symbol on phones and the lockup from sm, in both themes', () => {
     const brand = required(root().querySelector('header.site-menu a.brand'));
+    // These media strings are the exact complement of the CSS's 40rem query, so no fractional width falls between them.
     const sources = brand.querySelectorAll('picture > source');
     expect(
       sources.map((s) => [s.getAttribute('media'), s.getAttribute('srcset')]),
     ).toEqual([
       [
-        '(max-width: 39.99rem) and (prefers-color-scheme: dark)',
+        '(not (min-width: 40rem)) and (prefers-color-scheme: dark)',
         '/circuit-symbol-dark.svg',
       ],
-      ['(max-width: 39.99rem)', '/circuit-symbol-light.svg'],
+      ['(not (min-width: 40rem))', '/circuit-symbol-light.svg'],
       ['(prefers-color-scheme: dark)', '/circuit-lockup-dark.svg'],
     ]);
     const img = required(brand.querySelector('picture > img.brand-art'));

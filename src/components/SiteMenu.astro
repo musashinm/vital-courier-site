@@ -31,11 +31,11 @@ const alternateLanguageUrl = (target: Locale): string =>
         <picture>
           <source
             srcset="/circuit-symbol-dark.svg"
-            media="(max-width: 39.99rem) and (prefers-color-scheme: dark)"
+            media="(not (min-width: 40rem)) and (prefers-color-scheme: dark)"
           />
           <source
             srcset="/circuit-symbol-light.svg"
-            media="(max-width: 39.99rem)"
+            media="(not (min-width: 40rem))"
           />
           <source
             srcset="/circuit-lockup-dark.svg"
