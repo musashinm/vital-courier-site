@@ -1,0 +1,30 @@
+---
+import { appRepoUrl, ui, type Locale } from '../../i18n/ui';
+import ExternalLinkIcon from '../ExternalLinkIcon.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const { philosophy } = ui[locale].home;
+const strings = ui[locale];
+const lastProofIndex = philosophy.proofs.length - 1;
+---
+
+<section class="home-section home-content">
+  <div class="philosophy">
+    <p class="home-eyebrow">{philosophy.eyebrow}</p>
+    <h2 class="home-h2">{philosophy.heading}</h2>
+    <div class="proofs">
+      {philosophy.proofs.map((proof, index) => (
+        <div class="proof">
+          <h3>{proof.title}</h3>
+          <p>{proof.body}</p>
+          <!-- prettier-ignore -->
+          {index === lastProofIndex && <a href={appRepoUrl} target="_blank" rel="noopener noreferrer">{`${philosophy.sourceLink}\u2060`}<ExternalLinkIcon /><span class="sr-only"> {strings.opensInNewTab}</span></a>}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

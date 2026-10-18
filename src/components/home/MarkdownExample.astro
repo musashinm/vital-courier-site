@@ -1,0 +1,21 @@
+---
+interface Props {
+  markdown: string;
+  label: string;
+  filename: string;
+}
+
+const { markdown, label, filename } = Astro.props;
+const NOTE_DELIMITER = '---';
+const lines = markdown.split('\n');
+if (lines.at(-1) === '') lines.pop();
+---
+
+<figure class="note-frame" aria-label={label}>
+  <div class="note-frame__bar">
+    <span class="note-frame__dots" aria-hidden="true"></span>
+    <span>{filename}</span>
+  </div>
+  <!-- prettier-ignore -->
+  <pre><code>{lines.map((line, index) => <Fragment>{index > 0 ? '\n' : ''}{line === NOTE_DELIMITER ? <span class="note-syntax">{line}</span> : line}</Fragment>)}</code></pre>
+</figure>

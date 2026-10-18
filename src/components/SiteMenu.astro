@@ -1,0 +1,81 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { htmlLang, locales, ui, type Locale } from '../i18n/ui';
+
+interface Props {
+  locale: Locale;
+  pageType: 'home' | 'policy';
+  // Policy slug; required when pageType is 'policy'.
+  page?: string;
+}
+
+const { locale, pageType, page } = Astro.props;
+if (pageType === 'policy' && page === undefined) {
+  throw new Error('SiteMenu needs a page slug on policy pages.');
+}
+const strings = ui[locale];
+const localeRootUrl = (target: Locale): string =>
+  target === 'en' ? '/' : `/${target}`;
+const iosUrl =
+  pageType === 'home' ? '#ios-app' : `${localeRootUrl(locale)}#ios-app`;
+const alternateLanguageUrl = (target: Locale): string =>
+  pageType === 'home'
+    ? localeRootUrl(target)
+    : getRelativeLocaleUrl(target, page);
+---
+
+<header class="site-menu">
+  <div class="site-menu__inner">
+    <nav class="site-menu__primary" aria-label={strings.home.mainNavLabel}>
+      <a class="brand" href={localeRootUrl(locale)}>
+        <picture>
+          <source
+            srcset="/circuit-symbol-dark.svg"
+            media="(not (min-width: 40rem)) and (prefers-color-scheme: dark)"
+          />
+          <source
+            srcset="/circuit-symbol-light.svg"
+            media="(not (min-width: 40rem))"
+          />
+          <source
+            srcset="/circuit-lockup-dark.svg"
+            media="(prefers-color-scheme: dark)"
+          />
+          <img
+            class="brand-art"
+            src="/circuit-lockup-light.svg"
+            alt={strings.siteName}
+            width="191"
+            height="40"
+          />
+        </picture>
+      </a>
+      <a class="site-menu__ios" href={iosUrl}>
+        {strings.home.iosAppLink}
+      </a>
+    </nav>
+    <nav class="language" aria-label={strings.languageNavLabel}>
+      {locales.map((target) =>
+        target === locale ? (
+          <span aria-current="page">
+            <abbr
+              title={strings.languageTitles[target]}
+              lang={htmlLang[target]}
+            >
+              {strings.languageLabels[target]}
+            </abbr>
+          </span>
+        ) : (
+          <a href={alternateLanguageUrl(target)} hreflang={htmlLang[target]}>
+            <abbr
+              title={strings.languageTitles[target]}
+              lang={htmlLang[target]}
+            >
+              {strings.languageLabels[target]}
+            </abbr>
+          </a>
+        ),
+      )}
+    </nav>
+  </div>
+</header>

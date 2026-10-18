@@ -1,16 +1,19 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
-import { HTMLElement, TextNode, parse } from 'node-html-parser';
+import { HTMLElement, parse } from 'node-html-parser';
 import { describe, expect, it } from 'vitest';
+import { expectLabelJoinedToIcon } from './html';
 
 const repoUrl = 'https://github.com/musashinm/vital-courier-site';
-const WORD_JOINER = '\u2060';
 
 const pages = [
   {
     file: 'dist/privacy.html',
     ownPath: '/privacy',
     otherPath: '/pt-br/privacy',
+    homePath: '/',
+    iosHref: '/#ios-app',
+    iosText: 'iOS app',
     otherHreflang: 'pt-BR',
     currentLabel: 'EN',
     currentTitle: 'English',
@@ -19,6 +22,7 @@ const pages = [
     otherTitle: 'Português do Brasil',
     otherLang: 'pt-BR',
     navLabel: 'Language',
+    primaryNavLabel: 'Main',
     skipLink: 'Skip to content',
     footerLabel: 'Vital Courier on GitHub',
     historyLabel: 'See every change on GitHub',
@@ -28,6 +32,9 @@ const pages = [
     file: 'dist/pt-br/privacy.html',
     ownPath: '/pt-br/privacy',
     otherPath: '/privacy',
+    homePath: '/pt-br',
+    iosHref: '/pt-br#ios-app',
+    iosText: 'App para iOS',
     otherHreflang: 'en',
     currentLabel: 'PT-BR',
     currentTitle: 'Português do Brasil',
@@ -36,6 +43,7 @@ const pages = [
     otherTitle: 'English',
     otherLang: 'en',
     navLabel: 'Idioma',
+    primaryNavLabel: 'Principal',
     skipLink: 'Pular para o conteúdo',
     footerLabel: 'Vital Courier no GitHub',
     historyLabel: 'Ver todas as mudanças no GitHub',
@@ -62,19 +70,12 @@ function body(file: string): HTMLElement {
   return element;
 }
 
-// The icon must be a direct child whose previous node is the visible label ending in U+2060, with no whitespace node between them.
-function expectLabelJoinedToIcon(link: HTMLElement, label: string): void {
-  const icons = link.querySelectorAll('svg.external-link-icon');
-  expect(icons).toHaveLength(1);
-  expect(icons[0].getAttribute('aria-hidden')).toBe('true');
-  const iconIndex = link.childNodes.indexOf(icons[0]);
-  expect(iconIndex).toBeGreaterThan(0);
-  const labelNode = link.childNodes[iconIndex - 1];
-  expect(labelNode).toBeInstanceOf(TextNode);
-  expect(labelNode.text.trimStart()).toBe(`${label}${WORD_JOINER}`);
-}
-
 describe.each(pages)('$file shell', (page) => {
+  it('overlays the accent on the top edge so the sticky menu starts at y=0', () => {
+    const accent = childElements(body(page.file))[0];
+    expect(accent.classList.contains('site-accent--overlay')).toBe(true);
+  });
+
   it('puts the accent rule and then the skip link first in the body', () => {
     const shell = body(page.file);
     expect(shell.classList.contains('site-shell')).toBe(true);
@@ -93,19 +94,38 @@ describe.each(pages)('$file shell', (page) => {
     expect(shell.querySelector('main#main-content')).not.toBeNull();
   });
 
-  it('shows the Circuit lockup in a locale-aware brand link', () => {
-    const brand = body(page.file).querySelector('header a.brand');
-    expect(brand?.getAttribute('href')).toBe(page.ownPath);
-    expect(brand?.getAttribute('aria-label')).toBeUndefined();
-    const source = brand?.querySelector('picture > source');
-    expect(source?.getAttribute('srcset')).toBe('/circuit-lockup-dark.svg');
-    expect(source?.getAttribute('media')).toBe('(prefers-color-scheme: dark)');
-    const img = brand?.querySelector('picture > img.brand-art');
-    expect(img?.getAttribute('src')).toBe('/circuit-lockup-light.svg');
-    expect(img?.getAttribute('alt')).toBe('Vital Courier');
-    expect(img?.getAttribute('width')).toBe('191');
-    expect(img?.getAttribute('height')).toBe('40');
-    expect(brand?.text.trim()).toBe('');
+  it('uses the shared site menu with home destinations', () => {
+    const shell = body(page.file);
+    expect(shell.querySelectorAll('header.site-menu')).toHaveLength(1);
+    expect(shell.querySelector('.site-header')).toBeNull();
+    const header = shell.querySelector('header.site-menu')!;
+    const navs = header.querySelectorAll('nav');
+    expect(navs).toHaveLength(2);
+    for (const nav of navs) expect(nav.querySelector('nav')).toBeNull();
+    expect(
+      header
+        .querySelector('nav.site-menu__primary')
+        ?.getAttribute('aria-label'),
+    ).toBe(page.primaryNavLabel);
+    expect(
+      header.querySelector('nav.language')?.getAttribute('aria-label'),
+    ).toBe(page.navLabel);
+    const brand = header.querySelector('a.brand');
+    expect(brand?.getAttribute('href')).toBe(page.homePath);
+    expect(
+      brand?.querySelector('picture > img.brand-art')?.getAttribute('alt'),
+    ).toBe('Vital Courier');
+    expect(brand?.querySelectorAll('picture > source')).toHaveLength(3);
+    const ios = header.querySelector('a.site-menu__ios');
+    expect(ios?.getAttribute('href')).toBe(page.iosHref);
+    expect(ios?.text.trim()).toBe(page.iosText);
+  });
+
+  it('places the menu between the skip link and main', () => {
+    const [, , menu, main] = childElements(body(page.file));
+    expect(menu.tagName).toBe('HEADER');
+    expect(menu.classList.contains('site-menu')).toBe(true);
+    expect(main.id).toBe('main-content');
   });
 
   it('marks the current language and links the other one', () => {
@@ -181,18 +201,18 @@ describe.each(pages)('$file shell', (page) => {
 
   it('keeps the brand, language-switch and skip links in the same tab', () => {
     const sameTabLinks = body(page.file).querySelectorAll(
-      'a.skip-link, header a.brand, nav.language a',
+      'a.skip-link, header a.brand, a.site-menu__ios, nav.language a',
     );
-    expect(sameTabLinks).toHaveLength(3);
+    expect(sameTabLinks).toHaveLength(4);
     for (const link of sameTabLinks) {
       expect(link.hasAttribute('target')).toBe(false);
     }
   });
 });
 
-// SHA-256 of the approved lockups in the vault's Design/Logo/Assets/ (Logo.md approved 2026-10-08).
+// SHA-256 of the approved lockups and symbols in the vault's Design/Logo/Assets/ (Logo.md approved 2026-10-08).
 // The vault isn't available in CI, so the hashes stand in for it. Change them only with a new logo approval.
-describe('Circuit lockups', () => {
+describe('Circuit artwork', () => {
   it.each([
     [
       'circuit-lockup-light.svg',
@@ -201,6 +221,14 @@ describe('Circuit lockups', () => {
     [
       'circuit-lockup-dark.svg',
       'bdaa66987bc5558a3e6991cf5817e5c52ac87aa7c24d601559dcfb5fa19e8a98',
+    ],
+    [
+      'circuit-symbol-light.svg',
+      'dbac72b69cf5a1b5e47ff663a3c9fcdd449f607cb576dab6256bf161205226d5',
+    ],
+    [
+      'circuit-symbol-dark.svg',
+      'd30fc1c12bae2d1037716d41b61305b7fcbf027dc9ccfd58d1b6f8ff37de4273',
     ],
   ])(
     'ships %s byte-identical to the approved logo asset',
@@ -211,4 +239,103 @@ describe('Circuit lockups', () => {
       expect(sha256).toBe(approvedSha256);
     },
   );
+});
+
+function metaContent(file: string, selector: string): string | undefined {
+  const root = parse(readFileSync(file, 'utf8'));
+  return root.querySelector(selector)?.getAttribute('content');
+}
+
+describe('policy viewport', () => {
+  it.each(['dist/privacy.html', 'dist/pt-br/privacy.html'])(
+    'keeps the policy viewport meta unchanged in %s',
+    (file) => {
+      expect(metaContent(file, 'meta[name="viewport"]')).toBe(
+        'width=device-width, initial-scale=1',
+      );
+    },
+  );
+});
+
+const homePages = [
+  {
+    file: 'dist/index.html',
+    canonical: 'https://vitalcourier.app/',
+  },
+  {
+    file: 'dist/pt-br.html',
+    canonical: 'https://vitalcourier.app/pt-br',
+  },
+] as const;
+
+describe('home variant shell', () => {
+  it.each(homePages)(
+    'gives only the home variant viewport-fit=cover in $file',
+    ({ file }) => {
+      expect(metaContent(file, 'meta[name="viewport"]')).toBe(
+        'width=device-width, initial-scale=1, viewport-fit=cover',
+      );
+    },
+  );
+
+  it.each(homePages)(
+    'resolves locale roots without a trailing slash in $file',
+    ({ file, canonical }) => {
+      const root = parse(readFileSync(file, 'utf8'));
+      expect(
+        root.querySelector('link[rel="canonical"]')?.getAttribute('href'),
+      ).toBe(canonical);
+      const alternates = Object.fromEntries(
+        root
+          .querySelectorAll('link[rel="alternate"]')
+          .map((link) => [
+            link.getAttribute('hreflang'),
+            link.getAttribute('href'),
+          ]),
+      );
+      expect(alternates).toEqual({
+        en: 'https://vitalcourier.app/',
+        'pt-BR': 'https://vitalcourier.app/pt-br',
+      });
+    },
+  );
+
+  it.each(homePages)(
+    'renders hero, then navigation, then main#main-content.home-main, then footer, after the accent and skip link in $file',
+    ({ file }) => {
+      const children = childElements(body(file));
+      expect(children[0].classList.contains('site-accent')).toBe(true);
+      expect(children[1].classList.contains('skip-link')).toBe(true);
+      const mainIndex = children.findIndex(
+        (child) => child.id === 'main-content',
+      );
+      expect(children[mainIndex].tagName).toBe('MAIN');
+      expect(children[mainIndex].classList.contains('home-main')).toBe(true);
+      const heroIndex = children.findIndex((child) =>
+        child.querySelector('h1'),
+      );
+      const navigationIndex = children.findIndex((child) =>
+        child.classList.contains('site-menu'),
+      );
+      const footerIndex = children.findIndex(
+        (child) => child.tagName === 'FOOTER',
+      );
+      expect(heroIndex).toBeGreaterThan(1);
+      expect(navigationIndex).toBeGreaterThan(heroIndex);
+      expect(mainIndex).toBeGreaterThan(navigationIndex);
+      expect(footerIndex).toBeGreaterThan(mainIndex);
+    },
+  );
+
+  it.each(homePages)('keeps the accent in normal flow in $file', ({ file }) => {
+    const accent = childElements(body(file))[0];
+    expect(accent.classList.contains('site-accent')).toBe(true);
+    expect(accent.classList.contains('site-accent--overlay')).toBe(false);
+  });
+
+  it.each(homePages)('has no policy header in $file', ({ file }) => {
+    const shell = body(file);
+    expect(shell.querySelectorAll('header.site-menu')).toHaveLength(1);
+    expect(shell.querySelector('.site-main')).toBeNull();
+  });
 });
