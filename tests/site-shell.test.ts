@@ -1,10 +1,10 @@
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
-import { HTMLElement, TextNode, parse } from 'node-html-parser';
+import { readFileSync } from 'node:fs';
+import { HTMLElement, parse } from 'node-html-parser';
 import { describe, expect, it } from 'vitest';
+import { expectLabelJoinedToIcon } from './html';
 
 const repoUrl = 'https://github.com/musashinm/vital-courier-site';
-const WORD_JOINER = '\u2060';
 
 const pages = [
   {
@@ -60,18 +60,6 @@ function body(file: string): HTMLElement {
   const element = root.querySelector('body');
   if (!element) throw new Error(`${file} has no body`);
   return element;
-}
-
-// The icon must be a direct child whose previous node is the visible label ending in U+2060, with no whitespace node between them.
-function expectLabelJoinedToIcon(link: HTMLElement, label: string): void {
-  const icons = link.querySelectorAll('svg.external-link-icon');
-  expect(icons).toHaveLength(1);
-  expect(icons[0].getAttribute('aria-hidden')).toBe('true');
-  const iconIndex = link.childNodes.indexOf(icons[0]);
-  expect(iconIndex).toBeGreaterThan(0);
-  const labelNode = link.childNodes[iconIndex - 1];
-  expect(labelNode).toBeInstanceOf(TextNode);
-  expect(labelNode.text.trimStart()).toBe(`${label}${WORD_JOINER}`);
 }
 
 describe.each(pages)('$file shell', (page) => {
@@ -240,7 +228,7 @@ const homePages = [
   },
 ] as const;
 
-describe.skipIf(!existsSync('dist/index.html'))('home variant shell', () => {
+describe('home variant shell', () => {
   it.each(homePages)(
     'gives only the home variant viewport-fit=cover in $file',
     ({ file }) => {

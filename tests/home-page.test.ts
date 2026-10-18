@@ -1,7 +1,10 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { parse, type HTMLElement } from 'node-html-parser';
-import { ui, type Locale } from '../src/i18n/ui';
+import { appRepoUrl, ui, type Locale } from '../src/i18n/ui';
+import { assertAssetExists } from '../src/home/assets';
+import { allowedUrlPattern, normalizeUrl } from './allowed-urls';
+import { expectLabelJoinedToIcon } from './html';
 
 const HOME_PAGES: Record<Locale, string> = {
   en: 'dist/index.html',
@@ -26,7 +29,7 @@ function required<T>(value: T | null | undefined): T {
   return value as T;
 }
 
-describe.skipIf(!existsSync('dist/index.html'))('home hero', () => {
+describe('home hero', () => {
   const locales: Locale[] = ['en', 'pt-br'];
 
   it.each(locales)(
@@ -152,5 +155,246 @@ describe.skipIf(!existsSync('dist/index.html'))('home hero', () => {
         'aria-hidden',
       ),
     ).toBe('true');
+  });
+});
+
+const PAGE_EXPECTATIONS = [
+  {
+    file: 'dist/index.html',
+    locale: 'en',
+    htmlLang: 'en',
+    brandHref: '/',
+    otherHref: '/pt-br',
+    privacyHref: '/privacy',
+    navLabels: ['Main', 'Language'],
+    iosText: 'iOS app',
+    newTabWarning: ' (opens in a new tab)',
+  },
+  {
+    file: 'dist/pt-br.html',
+    locale: 'pt-br',
+    htmlLang: 'pt-BR',
+    brandHref: '/pt-br',
+    otherHref: '/',
+    privacyHref: '/pt-br/privacy',
+    navLabels: ['Principal', 'Idioma'],
+    iosText: 'App para iOS',
+    newTabWarning: ' (abre em uma nova aba)',
+  },
+] as const;
+
+describe('home assets', () => {
+  it('throws when a localized asset is missing', () => {
+    expect(() => assertAssetExists('public/home/x.png', () => false)).toThrow(
+      'Missing home asset',
+    );
+    expect(() =>
+      assertAssetExists('public/home/x.png', () => true),
+    ).not.toThrow();
+  });
+});
+
+describe.each(PAGE_EXPECTATIONS)('$file home page', (page) => {
+  const strings = ui[page.locale].home;
+  const root = () => homeDocument(page.locale);
+  const main = () => required(root().querySelector('main#main-content'));
+
+  it('declares language, title and description', () => {
+    expect(required(root().querySelector('html')).getAttribute('lang')).toBe(
+      page.htmlLang,
+    );
+    expect(required(root().querySelector('title')).text).toBe('Vital Courier');
+    expect(
+      required(root().querySelector('meta[name="description"]')).getAttribute(
+        'content',
+      ),
+    ).toBe(strings.metaDescription);
+  });
+
+  it('keeps the skip link first and main as the home-main landmark', () => {
+    const first = required(root().querySelector('a[href]'));
+    expect(first.classList.contains('skip-link')).toBe(true);
+    expect(first.getAttribute('href')).toBe('#main-content');
+    expect(main().classList.contains('home-main')).toBe(true);
+  });
+
+  it('follows the approved focus order', () => {
+    const hrefs = root()
+      .querySelectorAll('a[href]')
+      .map((link) => link.getAttribute('href'));
+    expect(hrefs).toEqual([
+      '#main-content',
+      page.brandHref,
+      '#ios-app',
+      page.otherHref,
+      appRepoUrl,
+      page.privacyHref,
+      appRepoUrl,
+    ]);
+  });
+
+  it('puts two sibling navs in a header after the hero', () => {
+    const document = root();
+    const header = required(document.querySelector('header.home-nav'));
+    expect(
+      header.querySelectorAll('nav').map((n) => n.getAttribute('aria-label')),
+    ).toEqual(page.navLabels);
+    for (const nav of header.querySelectorAll('nav')) {
+      expect(nav.querySelector('nav')).toBeNull();
+    }
+    const body = required(document.querySelector('body'));
+    const children = body.childNodes.filter(
+      (node): node is HTMLElement => 'classList' in node,
+    );
+    const heroIndex = children.findIndex((c) => c.classList.contains('hero'));
+    const navIndex = children.indexOf(header);
+    expect(heroIndex).toBeGreaterThan(-1);
+    expect(navIndex).toBeGreaterThan(heroIndex);
+  });
+
+  it('links the brand and the iOS anchor', () => {
+    const header = required(root().querySelector('header.home-nav'));
+    expect(required(header.querySelector('a.brand')).getAttribute('href')).toBe(
+      page.brandHref,
+    );
+    const ios = required(header.querySelector('a.home-nav__ios'));
+    expect(ios.getAttribute('href')).toBe('#ios-app');
+    expect(ios.text.trim()).toBe(page.iosText);
+    expect(root().querySelector('section#ios-app')).not.toBeNull();
+  });
+
+  it('shows the current locale as a non-link and links the other', () => {
+    const language = required(root().querySelector('.home-nav nav.language'));
+    expect(language.querySelectorAll('span[aria-current="page"]')).toHaveLength(
+      1,
+    );
+    expect(language.querySelectorAll('a')).toHaveLength(1);
+    expect(required(language.querySelector('a')).getAttribute('href')).toBe(
+      page.otherHref,
+    );
+  });
+
+  it('keeps the heading hierarchy', () => {
+    const levels = root()
+      .querySelectorAll('h1, h2, h3, h4')
+      .map((h) => h.tagName);
+    expect(levels).toEqual([
+      'H1',
+      'H2',
+      'H3',
+      'H3',
+      'H3',
+      'H2',
+      'H3',
+      'H3',
+      'H3',
+      'H2',
+    ]);
+    expect(root().querySelectorAll('h1')).toHaveLength(1);
+    for (const section of main().querySelectorAll('section')) {
+      expect(section.querySelectorAll('h2')).toHaveLength(1);
+    }
+  });
+
+  it('lists the screenshots in order with localized images', () => {
+    const shots = main().querySelectorAll('.shot');
+    expect(shots.map((s) => s.querySelector('h3')?.text)).toEqual(
+      strings.screens.items.map((item) => item.title),
+    );
+    const images = main().querySelectorAll('img.phone-capture');
+    expect(images).toHaveLength(2);
+    const suffix = page.locale;
+    const expected = [
+      [`/home/data-types-${suffix}.png`, strings.screens.items[0].alt],
+      [`/home/destination-${suffix}.png`, strings.screens.items[1].alt],
+    ];
+    images.forEach((image, index) => {
+      expect(image.getAttribute('src')).toBe(expected[index][0]);
+      expect(image.getAttribute('alt')).toBe(expected[index][1]);
+      expect(image.getAttribute('width')).toBe('840');
+      expect(image.getAttribute('height')).toBe('1821');
+      expect(image.getAttribute('loading')).toBe('lazy');
+      expect(image.getAttribute('decoding')).toBe('async');
+    });
+    expect(shots[2].classList.contains('shot--note')).toBe(true);
+  });
+
+  it('renders the Markdown example as escaped text', () => {
+    // node-html-parser treats <pre> content as raw text unless told otherwise.
+    const parsed = parse(readFileSync(page.file, 'utf8'), {
+      blockTextElements: { script: true, noscript: true, style: true },
+    });
+    const frame = required(parsed.querySelector('figure.note-frame'));
+    expect(frame.getAttribute('aria-label')).toBe(
+      strings.screens.markdownLabel,
+    );
+    expect(required(frame.querySelector('.note-frame__bar')).text.trim()).toBe(
+      strings.screens.markdownFilename,
+    );
+    const raw = readFileSync(
+      `src/content/home/example-${page.locale}.md`,
+      'utf8',
+    );
+    expect(required(frame.querySelector('pre code')).text).toBe(
+      raw.replace(/\n$/, ''),
+    );
+    const syntax = frame.querySelectorAll('.note-syntax');
+    expect(syntax.length).toBeGreaterThan(0);
+    for (const span of syntax) expect(span.text).toBe('---');
+  });
+
+  it('joins both app-repo links to their icon', () => {
+    const links = root().querySelectorAll(`a[href="${appRepoUrl}"]`);
+    expect(links).toHaveLength(2);
+    const labels = [strings.philosophy.sourceLink, strings.footer.source];
+    links.forEach((link, index) => {
+      expect(link.getAttribute('target')).toBe('_blank');
+      expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+      expectLabelJoinedToIcon(link, labels[index]);
+      expect(required(link.querySelector('span.sr-only')).text).toBe(
+        page.newTabWarning,
+      );
+    });
+  });
+
+  it('renders the footer', () => {
+    const footer = required(root().querySelector('footer.home-footer'));
+    expect(
+      required(footer.querySelector('a[href^="/"]')).getAttribute('href'),
+    ).toBe(page.privacyHref);
+    expect(required(footer.querySelector('p')).text).toBe(
+      strings.footer.context,
+    );
+  });
+
+  it('shows the pre-approval App Store panel with no control', () => {
+    const section = required(root().querySelector('#ios-app'));
+    for (const selector of ['a', 'img', 'button']) {
+      expect(section.querySelector(selector)).toBeNull();
+    }
+    expect(section.text).toContain(strings.appStore.preHeading);
+    expect(section.text).toContain(strings.appStore.preBody);
+  });
+
+  it('has nothing for the CSP to block', () => {
+    expect(root().querySelectorAll('script')).toHaveLength(0);
+    expect(root().querySelectorAll('style')).toHaveLength(0);
+    for (const element of root().querySelectorAll('*')) {
+      const names = Object.keys(element.attributes);
+      expect(names).not.toContain('style');
+      expect(names.filter((name) => name.startsWith('on'))).toEqual([]);
+    }
+    const urls = [
+      ...root()
+        .querySelectorAll('img')
+        .map((i) => i.getAttribute('src')),
+      ...root()
+        .querySelectorAll('link[rel="stylesheet"]')
+        .map((l) => l.getAttribute('href')),
+    ];
+    for (const url of urls) {
+      expect(normalizeUrl(url ?? '')).toMatch(allowedUrlPattern);
+      expect(url).toMatch(/^\//);
+    }
   });
 });

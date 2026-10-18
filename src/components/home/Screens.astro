@@ -1,0 +1,69 @@
+---
+import { ui, type Locale } from '../../i18n/ui';
+import { homeAssets } from '../../home/assets';
+import MarkdownExample from './MarkdownExample.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const { screens } = ui[locale].home;
+const { dataTypesSrc, destinationSrc, markdown } = homeAssets(locale);
+const [dataTypes, destination, readable] = screens.items;
+const PHONE_CAPTURE_WIDTH = 840;
+const PHONE_CAPTURE_HEIGHT = 1821;
+---
+
+<section class="home-section home-content">
+  <p class="home-eyebrow">{screens.eyebrow}</p>
+  <h2 class="home-h2">{screens.heading}</h2>
+  <p class="home-intro">{screens.intro}</p>
+  <div class="shot">
+    <div class="shot-copy">
+      <h3>{dataTypes.title}</h3>
+      <p>{dataTypes.body}</p>
+    </div>
+    <div class="stage">
+      <img
+        class="phone-capture"
+        src={dataTypesSrc}
+        alt={dataTypes.alt}
+        width={PHONE_CAPTURE_WIDTH}
+        height={PHONE_CAPTURE_HEIGHT}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  </div>
+  <div class="shot shot--reverse">
+    <div class="shot-copy">
+      <h3>{destination.title}</h3>
+      <p>{destination.body}</p>
+    </div>
+    <div class="stage">
+      <img
+        class="phone-capture"
+        src={destinationSrc}
+        alt={destination.alt}
+        width={PHONE_CAPTURE_WIDTH}
+        height={PHONE_CAPTURE_HEIGHT}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  </div>
+  <div class="shot shot--note">
+    <div class="shot-copy">
+      <h3>{readable.title}</h3>
+      <p>{readable.body}</p>
+    </div>
+    <div class="stage">
+      <MarkdownExample
+        markdown={markdown}
+        label={screens.markdownLabel}
+        filename={screens.markdownFilename}
+      />
+    </div>
+  </div>
+</section>

@@ -138,10 +138,8 @@ function validatePng(png: Buffer, expectedSize: number): void {
 }
 
 describe('deploy config', () => {
-  it('ships a _redirects file with only the root 302', () => {
-    expect(readFileSync('dist/_redirects', 'utf8').trim()).toBe(
-      '/ /privacy 302',
-    );
+  it('ships no _redirects file, so / serves the home page', () => {
+    expect(existsSync('dist/_redirects')).toBe(false);
   });
 
   // Header pairs stay in an ordered list so a duplicate line fails the test; Cloudflare would join duplicates with a comma.
@@ -238,20 +236,22 @@ describe('deploy config', () => {
     expect(() => validatePng(png, 32)).not.toThrow();
   });
 
-  it.each(['dist/privacy.html', 'dist/pt-br/privacy.html'])(
-    '%s links the favicons',
-    (file) => {
-      const root = parse(readFileSync(file, 'utf8'));
-      const icons = root
-        .querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]')
-        .map((l) => ({
-          href: l.getAttribute('href'),
-          media: l.getAttribute('media') ?? null,
-        }));
-      expect(icons).toEqual([
-        { href: '/favicon-32.png', media: null },
-        { href: '/favicon.svg', media: null },
-      ]);
-    },
-  );
+  it.each([
+    'dist/index.html',
+    'dist/pt-br.html',
+    'dist/privacy.html',
+    'dist/pt-br/privacy.html',
+  ])('%s links the favicons', (file) => {
+    const root = parse(readFileSync(file, 'utf8'));
+    const icons = root
+      .querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]')
+      .map((l) => ({
+        href: l.getAttribute('href'),
+        media: l.getAttribute('media') ?? null,
+      }));
+    expect(icons).toEqual([
+      { href: '/favicon-32.png', media: null },
+      { href: '/favicon.svg', media: null },
+    ]);
+  });
 });

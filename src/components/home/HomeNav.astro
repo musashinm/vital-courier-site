@@ -1,0 +1,60 @@
+---
+import { htmlLang, locales, ui, type Locale } from '../../i18n/ui';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const strings = ui[locale];
+const localeRootUrl = (target: Locale): string =>
+  target === 'en' ? '/' : `/${target}`;
+---
+
+<header class="home-nav">
+  <div class="home-nav__inner">
+    <nav class="home-nav__primary" aria-label={strings.home.mainNavLabel}>
+      <a class="brand" href={localeRootUrl(locale)}>
+        <picture>
+          <source
+            srcset="/circuit-lockup-dark.svg"
+            media="(prefers-color-scheme: dark)"
+          />
+          <img
+            class="brand-art"
+            src="/circuit-lockup-light.svg"
+            alt={strings.siteName}
+            width="191"
+            height="40"
+          />
+        </picture>
+      </a>
+      <a class="home-nav__ios" href="#ios-app">
+        {strings.home.iosAppLink}
+      </a>
+    </nav>
+    <nav class="language" aria-label={strings.languageNavLabel}>
+      {locales.map((target) =>
+        target === locale ? (
+          <span aria-current="page">
+            <abbr
+              title={strings.languageTitles[target]}
+              lang={htmlLang[target]}
+            >
+              {strings.languageLabels[target]}
+            </abbr>
+          </span>
+        ) : (
+          <a href={localeRootUrl(target)} hreflang={htmlLang[target]}>
+            <abbr
+              title={strings.languageTitles[target]}
+              lang={htmlLang[target]}
+            >
+              {strings.languageLabels[target]}
+            </abbr>
+          </a>
+        ),
+      )}
+    </nav>
+  </div>
+</header>

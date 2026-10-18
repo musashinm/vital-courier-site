@@ -1,0 +1,26 @@
+---
+import { appRepoUrl, ui, type Locale } from '../../i18n/ui';
+import ExternalLinkIcon from '../ExternalLinkIcon.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const strings = ui[locale];
+const { footer } = strings.home;
+const privacyUrl = locale === 'en' ? '/privacy' : `/${locale}/privacy`;
+---
+
+<footer class="home-footer">
+  <p>{footer.context}</p>
+  <ul>
+    <li>
+      <a href={privacyUrl}>{footer.privacy}</a>
+    </li>
+    <li>
+      <!-- prettier-ignore -->
+      <a href={appRepoUrl} target="_blank" rel="noopener noreferrer">{`${footer.source}⁠`}<ExternalLinkIcon /><span class="sr-only"> {strings.opensInNewTab}</span></a>
+    </li>
+  </ul>
+</footer>
