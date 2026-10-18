@@ -50,7 +50,10 @@ const absolute = (target: Locale) =>
     ))}
   </head>
   <body class="site-shell">
-    <div class="site-accent" aria-hidden="true"></div>
+    <div
+      class={isHome ? 'site-accent' : 'site-accent site-accent--overlay'}
+      aria-hidden="true"
+    ></div>
     <a class="skip-link" href="#main-content">
       {strings.skipLink}
     </a>

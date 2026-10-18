@@ -194,6 +194,13 @@
 .site-accent {
   width: 100%;
 }
+/* Policy pages: lay the bar over the top edge so the sticky menu starts at y=0. */
+.site-accent--overlay {
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  z-index: 5;
+}
 .shell {
   width: min(100%, 1120px);
   margin-inline: auto;

@@ -26,6 +26,14 @@ function builtCss(): string {
 }
 
 describe('built CSS for policy wayfinding', () => {
+  it('lays the accent bar over the page top above the sticky menu', () => {
+    const rule = builtCss().match(/\.site-accent--overlay\{([^}]*)\}/);
+    expect(rule).not.toBeNull();
+    expect(rule![1]).toContain('position:absolute');
+    expect(rule![1]).toContain('top:0');
+    expect(rule![1]).toContain('z-index:5');
+  });
+
   it('keeps external-link icons inline despite Preflight making SVGs block', () => {
     expect(builtCss()).toMatch(
       /\.external-link-icon\{[^}]*display:inline-block/,

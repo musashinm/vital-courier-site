@@ -71,6 +71,11 @@ function body(file: string): HTMLElement {
 }
 
 describe.each(pages)('$file shell', (page) => {
+  it('overlays the accent on the top edge so the sticky menu starts at y=0', () => {
+    const accent = childElements(body(page.file))[0];
+    expect(accent.classList.contains('site-accent--overlay')).toBe(true);
+  });
+
   it('puts the accent rule and then the skip link first in the body', () => {
     const shell = body(page.file);
     expect(shell.classList.contains('site-shell')).toBe(true);
@@ -321,6 +326,12 @@ describe('home variant shell', () => {
       expect(footerIndex).toBeGreaterThan(mainIndex);
     },
   );
+
+  it.each(homePages)('keeps the accent in normal flow in $file', ({ file }) => {
+    const accent = childElements(body(file))[0];
+    expect(accent.classList.contains('site-accent')).toBe(true);
+    expect(accent.classList.contains('site-accent--overlay')).toBe(false);
+  });
 
   it.each(homePages)('has no policy header in $file', ({ file }) => {
     const shell = body(file);

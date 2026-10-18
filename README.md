@@ -72,10 +72,10 @@ About the setup in `Dockerfile` and `compose.yaml`:
 src/
   content/privacy/   en.md and pt-br.md, the policy text. Changing the text means moving its `updated:` date.
   content.config.ts  The privacy collection schema
-  pages/             privacy.astro and pt-br/privacy.astro
+  pages/             index.astro and pt-br/index.astro (the home page), privacy.astro and pt-br/privacy.astro
   layouts/           Base.astro, the page shell
   content/home/      example-en.md and example-pt-br.md, the sample daily notes shown on the home page
-  components/        PolicyPage.astro
+  components/        PolicyPage.astro and SiteMenu.astro, the sticky menu both page types share
   components/home/   The home page sections
   i18n/              ui.ts, the interface strings in both languages
   markdown/          external-links.ts, a rehype plugin that opens links in a new tab
