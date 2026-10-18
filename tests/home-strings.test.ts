@@ -168,9 +168,7 @@ describe('home page strings', () => {
   });
 
   it('keeps both locales structurally identical', () => {
-    expect(
-      leafPaths(ui['pt-br'].home).filter((p) => !p.endsWith('.alt')),
-    ).toEqual(leafPaths(ui.en.home).filter((p) => !p.endsWith('.alt')));
+    expect(leafPaths(ui['pt-br'].home)).toEqual(leafPaths(ui.en.home));
     for (const locale of locales) {
       expect(ui[locale].home.screens.items).toHaveLength(3);
       expect(ui[locale].home.philosophy.proofs).toHaveLength(3);
