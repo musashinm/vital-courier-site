@@ -8,6 +8,7 @@ Source for [vitalcourier.app](https://vitalcourier.app), the site for the Vital 
 - Both policies are Markdown files in a content collection (`src/content/privacy/`), rendered through one shared layout.
 - Tailwind CSS 4 through `@tailwindcss/vite`, with `@tailwindcss/typography` for the policy text.
 - Cloudflare Workers static assets serve `dist/`. There is no Worker script. `public/_headers` sets the Content-Security-Policy, HSTS and the other security headers on every static response. The only script the CSP allows is the Web Analytics beacon from `static.cloudflareinsights.com`, which reports to the site's own `/cdn-cgi/rum`. Any other new external resource, such as a web font, needs its source added to the CSP or the browser blocks it.
+- The site supports the browsers [Tailwind CSS 4 supports](https://tailwindcss.com/docs/compatibility): Safari and iOS 16.4+, Chrome 111+ and Firefox 128+. The built CSS and the header's `<picture>` media queries rely on Media Queries Level 4 syntax.
 - Vitest reads the built HTML in `dist/` with `node-html-parser`, without a browser.
 
 ## Prerequisites

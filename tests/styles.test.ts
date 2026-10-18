@@ -256,3 +256,11 @@ describe('built HTML and CSP', () => {
     },
   );
 });
+
+describe('README browser support', () => {
+  it('names the Safari and iOS floor that Media Queries Level 4 needs', () => {
+    expect(readFileSync('README.md', 'utf8')).toMatch(
+      /Safari and iOS 16\.4\+, Chrome 111\+ and Firefox 128\+/,
+    );
+  });
+});
