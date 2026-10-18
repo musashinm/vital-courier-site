@@ -1,6 +1,7 @@
 import { crc32, inflateSync } from 'node:zlib';
 
-const PNG_SIGNATURE_LENGTH = 8;
+const PNG_SIGNATURE = Buffer.from('89504e470d0a1a0a', 'hex');
+const PNG_SIGNATURE_LENGTH = PNG_SIGNATURE.length;
 const PNG_CHUNK_LENGTH_SIZE = 4;
 const PNG_CHUNK_TYPE_SIZE = 4;
 const PNG_CHUNK_CRC_SIZE = 4;
@@ -65,6 +66,9 @@ export function validatePng(
   expectedWidth: number,
   expectedHeight: number,
 ): void {
+  if (!png.subarray(0, PNG_SIGNATURE_LENGTH).equals(PNG_SIGNATURE)) {
+    throw new Error('Missing PNG signature');
+  }
   const { chunks, endOffset } = readPngChunks(png);
   if (endOffset !== png.length) throw new Error('Data after the last chunk');
   const types = chunks.map((chunk) => chunk.type);
