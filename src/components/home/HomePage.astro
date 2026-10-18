@@ -1,10 +1,10 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { appStoreUrl, ui, type Locale } from '../../i18n/ui';
+import SiteMenu from '../SiteMenu.astro';
 import AppStore from './AppStore.astro';
 import Hero from './Hero.astro';
 import HomeFooter from './HomeFooter.astro';
-import HomeNav from './HomeNav.astro';
 import Philosophy from './Philosophy.astro';
 import Screens from './Screens.astro';
 
@@ -27,7 +27,7 @@ const { title, metaDescription } = ui[locale].home;
     <Hero locale={locale} />
   </Fragment>
   <Fragment slot="navigation">
-    <HomeNav locale={locale} />
+    <SiteMenu locale={locale} pageType="home" />
   </Fragment>
   <Screens locale={locale} />
   <Philosophy locale={locale} />

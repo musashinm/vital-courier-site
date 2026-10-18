@@ -104,7 +104,7 @@ Open an issue. Issues are public, so don't put health information or anything pr
 Everything in this repo is under the MIT License (see `LICENSE`), except the material below, which stays copyright 2026 Kleber Kihara, all rights reserved:
 
 - The privacy policy text in `src/content/privacy/en.md` and `src/content/privacy/pt-br.md`.
-- The Vital Courier logos and icons: `public/circuit-lockup-dark.svg`, `public/circuit-lockup-light.svg`, `public/favicon.svg` and `public/favicon-32.png`.
+- The Vital Courier logos and icons: `public/circuit-lockup-dark.svg`, `public/circuit-lockup-light.svg`, `public/circuit-symbol-dark.svg`, `public/circuit-symbol-light.svg`, `public/favicon.svg` and `public/favicon-32.png`.
 - The app screenshots: `public/home/data-types-en.png`, `public/home/data-types-pt-br.png`, `public/home/destination-en.png` and `public/home/destination-pt-br.png`.
 
 The exception covers copies of that material too, such as the policy excerpts in `tests/privacy-pages.test.ts` and the built pages and images in `dist/`. Copying or reusing any of it needs permission.

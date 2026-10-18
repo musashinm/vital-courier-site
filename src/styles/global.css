@@ -123,6 +123,16 @@
   --home-delay-cue-compact: 1520ms;
   --home-delay-cue-sm: 1940ms;
   --home-line-travel: 110%;
+  --site-menu-min-height: 4.75rem; /* 76 px */
+  --site-fragment-gap: 1rem; /* 16 px */
+  --site-fragment-offset: calc(
+    var(--site-menu-min-height) + var(--site-fragment-gap)
+  );
+}
+@media (min-width: 64rem) {
+  :root {
+    --site-menu-min-height: 5.25rem; /* 84 px */
+  }
 }
 
 @theme inline {
@@ -526,34 +536,12 @@
   }
 }
 
-/* Home page only (policy pages have no sticky menu): fragment targets sit below the sticky menu (136 + 16, 76 + 16, 84 + 16). */
-html:has(.home-nav) {
-  scroll-padding-top: 152px;
-}
-#ios-app,
-.home-main {
-  scroll-margin-top: 152px;
-}
-@media (min-width: 40rem) {
-  html:has(.home-nav) {
-    scroll-padding-top: 92px;
-  }
-  #ios-app,
-  .home-main {
-    scroll-margin-top: 92px;
-  }
-}
-@media (min-width: 64rem) {
-  html:has(.home-nav) {
-    scroll-padding-top: 100px;
-  }
-  #ios-app,
-  .home-main {
-    scroll-margin-top: 100px;
-  }
+/* Fragment targets sit one gap below the sticky menu (92 px, 100 px from lg). */
+html:has(.site-menu) {
+  scroll-padding-top: var(--site-fragment-offset);
 }
 
-/* No ancestor of .home-nav may set overflow, or position: sticky breaks. */
+/* No ancestor of .site-menu may set overflow, or position: sticky breaks. */
 .home-main {
   display: block;
 }
@@ -563,32 +551,48 @@ html:has(.home-nav) {
   padding-inline: 24px;
 }
 
-.home-nav {
+.site-menu {
   position: sticky;
   top: 0;
   z-index: 4;
-  min-height: 136px;
-  border-bottom: 1px solid var(--vc-border);
-  background: var(--vc-canvas);
-}
-.home-nav__inner {
-  display: flex;
-  width: min(100%, 1200px);
-  flex-direction: column;
-  gap: 8px;
-  margin-inline: auto;
-  padding: 12px 16px;
-}
-.home-nav__primary {
   display: flex;
   align-items: center;
-  gap: 4px;
+  min-height: var(--site-menu-min-height);
+  background: var(--vc-canvas);
 }
-.home-nav .language {
-  align-self: flex-end;
+.site-menu::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--vc-border);
+  pointer-events: none;
+}
+.site-menu__inner {
+  display: flex;
+  width: min(100%, 1200px);
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-inline: auto;
+  padding: 8px 16px;
+}
+.site-menu__primary {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+}
+.site-menu .language {
+  flex: none;
   padding: 8px;
 }
-.home-nav__ios {
+.site-menu .brand-art {
+  width: 32px;
+  height: 32px;
+}
+.site-menu__ios {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
@@ -601,20 +605,20 @@ html:has(.home-nav) {
   text-decoration: none;
   white-space: nowrap;
 }
-.home-nav__ios:visited {
+.site-menu__ios:visited {
   color: var(--vc-text);
 }
-.home-nav__ios:hover {
+.site-menu__ios:hover {
   color: var(--vc-link-hover);
   text-decoration: underline;
   text-decoration-thickness: 0.08em;
   text-underline-offset: 0.18em;
 }
-.home-nav__ios:active {
+.site-menu__ios:active {
   color: var(--vc-link-hover);
   background: var(--vc-soft);
 }
-.home-nav__ios:focus-visible {
+.site-menu__ios:focus-visible {
   outline: 3px solid var(--vc-focus);
   outline-offset: 3px;
 }
@@ -861,18 +865,16 @@ html:has(.home-nav) {
   .home-content {
     padding-inline: 32px;
   }
-  .home-nav {
-    min-height: 76px;
-  }
-  .home-nav__inner {
-    min-height: 76px;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+  .site-menu__inner {
+    gap: 16px;
     padding: 8px 32px;
   }
-  .home-nav .language {
-    align-self: auto;
+  .site-menu__primary {
+    gap: 16px;
+  }
+  .site-menu .brand-art {
+    width: 190.848px;
+    height: 40px;
   }
   .home-section {
     padding-block: 128px;
@@ -937,14 +939,11 @@ html:has(.home-nav) {
   .home-content {
     padding-inline: 40px;
   }
-  .home-nav {
-    min-height: 84px;
-  }
-  .home-nav__inner {
-    min-height: 84px;
+  .site-menu__inner {
+    gap: 24px;
     padding-inline: 40px;
   }
-  .home-nav__primary {
+  .site-menu__primary {
     gap: 28px;
   }
   .home-section {

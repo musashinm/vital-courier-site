@@ -55,28 +55,62 @@ describe('built CSS for the home page', () => {
     expect(css).toContain('--home-line-travel:110%');
   });
 
-  it('sticks the home menu to the top', () => {
-    expect(builtCss()).toMatch(/\.home-nav\{[^}]*position:sticky[^}]*top:0/);
+  it('sticks the site menu to the top with the rem minimum height', () => {
+    const css = builtCss();
+    expect(css).toMatch(/\.site-menu\{[^}]*position:sticky[^}]*top:0/);
+    expect(css).toMatch(
+      /\.site-menu\{[^}]*min-height:var\(--site-menu-min-height\)/,
+    );
+    expect(css).not.toMatch(
+      /(?:^|[}\s,])\.site-menu\{[^}]*(?<![-\w])height:\d/,
+    );
+    expect(css).not.toMatch(/\.site-menu__inner\{[^}]*flex-wrap:wrap/);
+    expect(css).not.toMatch(/\.site-menu__inner\{[^}]*min-height/);
+    expect(css).not.toMatch(/\.site-menu\{[^}]*border-bottom/);
+    const rule = css.match(/\.site-menu:(?::)?after\{([^}]*)\}/)?.[1] ?? '';
+    expect(rule).toContain('content:""');
+    expect(rule).toContain('position:absolute');
+    // Lightning CSS may keep inset-inline:0 or expand it to left:0;right:0. Accept both.
+    expect(rule).toMatch(/inset-inline:0|left:0;right:0|right:0;left:0/);
+    expect(rule).toContain('bottom:0');
+    expect(rule).toContain('height:1px');
+    expect(rule).toContain('background:var(--vc-border)');
+    expect(rule).toContain('pointer-events:none');
+    // Lightning CSS reorders declarations, so check each one on its own.
+    expect(css).toMatch(/\.site-menu\{[^}]*display:flex/);
+    expect(css).toMatch(/\.site-menu\{[^}]*align-items:center/);
   });
 
-  it('offsets fragment targets by 152, 92 and 100 px on the home page only', () => {
-    const css = builtCss();
-    for (const offset of ['152px', '92px', '100px']) {
-      expect(css).toMatch(
-        new RegExp(
-          `html:has\\(\\.home-nav\\)\\{[^}]*scroll-padding-top:${offset}`,
-        ),
-      );
-      expect(css).toMatch(
-        new RegExp(`#ios-app,\\.home-main\\{[^}]*scroll-margin-top:${offset}`),
-      );
-    }
+  it('gives the language group 8px padding, the deliberate policy change from 2px', () => {
+    expect(builtCss()).toMatch(/\.site-menu \.language\{[^}]*padding:8px/);
   });
 
-  it('leaves the policy pages without a home menu offset', () => {
+  it('derives the fragment offset from the menu height tokens', () => {
     const css = builtCss();
-    expect(css).not.toMatch(/(?:^|[},])html\{[^}]*scroll-padding-top/);
-    expect(css).not.toMatch(/#main-content[^{]*\{[^}]*scroll-margin-top/);
+    expect(css).toContain('--site-menu-min-height:4.75rem');
+    expect(css).toContain('--site-fragment-gap:1rem');
+    expect(css).toMatch(
+      /--site-fragment-offset:calc\(var\(--site-menu-min-height\) \+ var\(--site-fragment-gap\)\)/,
+    );
+    expect(css).toMatch(
+      /@media \((?:min-width: ?64rem|width>=64rem)\)\{(?:[^{}]|\{[^{}]*\})*:root\{[^}]*--site-menu-min-height:5\.25rem/,
+    );
+    expect(css).toMatch(
+      /html:has\(\.site-menu\)\{[^}]*scroll-padding-top:var\(--site-fragment-offset\)/,
+    );
+    expect(css).not.toMatch(
+      /(?:#ios-app|\.home-main|#main-content)[^{]*\{[^}]*scroll-margin/,
+    );
+  });
+
+  it('sizes the brand art as a 32px symbol on phones and the lockup from sm', () => {
+    const css = builtCss();
+    expect(css).toMatch(
+      /\.site-menu \.brand-art\{[^}]*width:32px[^}]*height:32px/,
+    );
+    expect(css).toMatch(
+      /@media \((?:min-width: ?40rem|width>=40rem)\)\{(?:[^{}]|\{[^{}]*\})*\.site-menu \.brand-art\{[^}]*width:190\.848px[^}]*height:40px/,
+    );
   });
 
   it('keeps the Markdown stage at 680px and the frame on soft', () => {

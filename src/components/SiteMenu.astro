@@ -1,21 +1,42 @@
 ---
-import { htmlLang, locales, ui, type Locale } from '../../i18n/ui';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { htmlLang, locales, ui, type Locale } from '../i18n/ui';
 
 interface Props {
   locale: Locale;
+  pageType: 'home' | 'policy';
+  // Policy slug; required when pageType is 'policy'.
+  page?: string;
 }
 
-const { locale } = Astro.props;
+const { locale, pageType, page } = Astro.props;
+if (pageType === 'policy' && page === undefined) {
+  throw new Error('SiteMenu needs a page slug on policy pages.');
+}
 const strings = ui[locale];
 const localeRootUrl = (target: Locale): string =>
   target === 'en' ? '/' : `/${target}`;
+const iosUrl =
+  pageType === 'home' ? '#ios-app' : `${localeRootUrl(locale)}#ios-app`;
+const alternateLanguageUrl = (target: Locale): string =>
+  pageType === 'home'
+    ? localeRootUrl(target)
+    : getRelativeLocaleUrl(target, page);
 ---
 
-<header class="home-nav">
-  <div class="home-nav__inner">
-    <nav class="home-nav__primary" aria-label={strings.home.mainNavLabel}>
+<header class="site-menu">
+  <div class="site-menu__inner">
+    <nav class="site-menu__primary" aria-label={strings.home.mainNavLabel}>
       <a class="brand" href={localeRootUrl(locale)}>
         <picture>
+          <source
+            srcset="/circuit-symbol-dark.svg"
+            media="(max-width: 39.99rem) and (prefers-color-scheme: dark)"
+          />
+          <source
+            srcset="/circuit-symbol-light.svg"
+            media="(max-width: 39.99rem)"
+          />
           <source
             srcset="/circuit-lockup-dark.svg"
             media="(prefers-color-scheme: dark)"
@@ -29,7 +50,7 @@ const localeRootUrl = (target: Locale): string =>
           />
         </picture>
       </a>
-      <a class="home-nav__ios" href="#ios-app">
+      <a class="site-menu__ios" href={iosUrl}>
         {strings.home.iosAppLink}
       </a>
     </nav>
@@ -45,7 +66,7 @@ const localeRootUrl = (target: Locale): string =>
             </abbr>
           </span>
         ) : (
-          <a href={localeRootUrl(target)} hreflang={htmlLang[target]}>
+          <a href={alternateLanguageUrl(target)} hreflang={htmlLang[target]}>
             <abbr
               title={strings.languageTitles[target]}
               lang={htmlLang[target]}

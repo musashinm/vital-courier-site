@@ -308,7 +308,7 @@ describe.each(PAGE_EXPECTATIONS)('$file home page', (page) => {
 
   it('puts two sibling navs in a header after the hero', () => {
     const document = root();
-    const header = required(document.querySelector('header.home-nav'));
+    const header = required(document.querySelector('header.site-menu'));
     expect(
       header.querySelectorAll('nav').map((n) => n.getAttribute('aria-label')),
     ).toEqual(page.navLabels);
@@ -325,19 +325,38 @@ describe.each(PAGE_EXPECTATIONS)('$file home page', (page) => {
     expect(navIndex).toBeGreaterThan(heroIndex);
   });
 
+  it('shows the symbol on phones and the lockup from sm, in both themes', () => {
+    const brand = required(root().querySelector('header.site-menu a.brand'));
+    const sources = brand.querySelectorAll('picture > source');
+    expect(
+      sources.map((s) => [s.getAttribute('media'), s.getAttribute('srcset')]),
+    ).toEqual([
+      [
+        '(max-width: 39.99rem) and (prefers-color-scheme: dark)',
+        '/circuit-symbol-dark.svg',
+      ],
+      ['(max-width: 39.99rem)', '/circuit-symbol-light.svg'],
+      ['(prefers-color-scheme: dark)', '/circuit-lockup-dark.svg'],
+    ]);
+    const img = required(brand.querySelector('picture > img.brand-art'));
+    expect(img.getAttribute('src')).toBe('/circuit-lockup-light.svg');
+    expect(img.getAttribute('alt')).toBe('Vital Courier');
+    expect(brand.text.trim()).toBe('');
+  });
+
   it('links the brand and the iOS anchor', () => {
-    const header = required(root().querySelector('header.home-nav'));
+    const header = required(root().querySelector('header.site-menu'));
     expect(required(header.querySelector('a.brand')).getAttribute('href')).toBe(
       page.brandHref,
     );
-    const ios = required(header.querySelector('a.home-nav__ios'));
+    const ios = required(header.querySelector('a.site-menu__ios'));
     expect(ios.getAttribute('href')).toBe('#ios-app');
     expect(ios.text.trim()).toBe(page.iosText);
     expect(root().querySelector('section#ios-app')).not.toBeNull();
   });
 
   it('shows the current locale as a non-link and links the other', () => {
-    const language = required(root().querySelector('.home-nav nav.language'));
+    const language = required(root().querySelector('.site-menu nav.language'));
     expect(language.querySelectorAll('span[aria-current="page"]')).toHaveLength(
       1,
     );

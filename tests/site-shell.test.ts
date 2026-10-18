@@ -178,9 +178,9 @@ describe.each(pages)('$file shell', (page) => {
   });
 });
 
-// SHA-256 of the approved lockups in the vault's Design/Logo/Assets/ (Logo.md approved 2026-10-08).
+// SHA-256 of the approved lockups and symbols in the vault's Design/Logo/Assets/ (Logo.md approved 2026-10-08).
 // The vault isn't available in CI, so the hashes stand in for it. Change them only with a new logo approval.
-describe('Circuit lockups', () => {
+describe('Circuit artwork', () => {
   it.each([
     [
       'circuit-lockup-light.svg',
@@ -189,6 +189,14 @@ describe('Circuit lockups', () => {
     [
       'circuit-lockup-dark.svg',
       'bdaa66987bc5558a3e6991cf5817e5c52ac87aa7c24d601559dcfb5fa19e8a98',
+    ],
+    [
+      'circuit-symbol-light.svg',
+      'dbac72b69cf5a1b5e47ff663a3c9fcdd449f607cb576dab6256bf161205226d5',
+    ],
+    [
+      'circuit-symbol-dark.svg',
+      'd30fc1c12bae2d1037716d41b61305b7fcbf027dc9ccfd58d1b6f8ff37de4273',
     ],
   ])(
     'ships %s byte-identical to the approved logo asset',
@@ -275,7 +283,7 @@ describe('home variant shell', () => {
         child.querySelector('h1'),
       );
       const navigationIndex = children.findIndex((child) =>
-        child.classList.contains('home-nav'),
+        child.classList.contains('site-menu'),
       );
       const footerIndex = children.findIndex(
         (child) => child.tagName === 'FOOTER',
