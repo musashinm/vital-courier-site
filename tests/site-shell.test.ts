@@ -22,6 +22,7 @@ const pages = [
     otherTitle: 'Português do Brasil',
     otherLang: 'pt-BR',
     navLabel: 'Language',
+    primaryNavLabel: 'Main',
     skipLink: 'Skip to content',
     footerLabel: 'Vital Courier on GitHub',
     historyLabel: 'See every change on GitHub',
@@ -42,6 +43,7 @@ const pages = [
     otherTitle: 'English',
     otherLang: 'en',
     navLabel: 'Idioma',
+    primaryNavLabel: 'Principal',
     skipLink: 'Pular para o conteúdo',
     footerLabel: 'Vital Courier no GitHub',
     historyLabel: 'Ver todas as mudanças no GitHub',
@@ -95,6 +97,14 @@ describe.each(pages)('$file shell', (page) => {
     const navs = header.querySelectorAll('nav');
     expect(navs).toHaveLength(2);
     for (const nav of navs) expect(nav.querySelector('nav')).toBeNull();
+    expect(
+      header
+        .querySelector('nav.site-menu__primary')
+        ?.getAttribute('aria-label'),
+    ).toBe(page.primaryNavLabel);
+    expect(
+      header.querySelector('nav.language')?.getAttribute('aria-label'),
+    ).toBe(page.navLabel);
     const brand = header.querySelector('a.brand');
     expect(brand?.getAttribute('href')).toBe(page.homePath);
     expect(
