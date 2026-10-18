@@ -22,12 +22,15 @@ export function assertAssetExists(
   if (!exists(path)) throw new Error(`Missing home asset: ${path}`);
 }
 
-export function homeAssets(locale: Locale): HomeAssets {
+export function homeAssets(
+  locale: Locale,
+  exists: (path: string) => boolean = existsSync,
+): HomeAssets {
   const dataTypesSrc = `/home/data-types-${locale}.png`;
   const destinationSrc = `/home/destination-${locale}.png`;
   for (const src of [dataTypesSrc, destinationSrc]) {
     try {
-      assertAssetExists(join('public', src), existsSync);
+      assertAssetExists(join('public', src), exists);
     } catch {
       throw new Error(`Missing home asset for ${locale}: ${src}`);
     }

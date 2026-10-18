@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { parse, type HTMLElement } from 'node-html-parser';
 import { appRepoUrl, ui, type Locale } from '../src/i18n/ui';
-import { assertAssetExists } from '../src/home/assets';
+import { assertAssetExists, homeAssets } from '../src/home/assets';
 import { allowedUrlPattern, normalizeUrl } from './allowed-urls';
 import { expectLabelJoinedToIcon } from './html';
 
@@ -184,6 +184,15 @@ const PAGE_EXPECTATIONS = [
 ] as const;
 
 describe('home assets', () => {
+  it('makes the loader throw when a localized asset is missing', () => {
+    expect(() => homeAssets('pt-br', () => false)).toThrow(
+      'Missing home asset for pt-br: /home/data-types-pt-br.png',
+    );
+    expect(homeAssets('pt-br', () => true).dataTypesSrc).toBe(
+      '/home/data-types-pt-br.png',
+    );
+  });
+
   it('throws when a localized asset is missing', () => {
     expect(() => assertAssetExists('public/home/x.png', () => false)).toThrow(
       'Missing home asset',
