@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { parse, type HTMLElement } from 'node-html-parser';
@@ -5,6 +6,7 @@ import { appRepoUrl, ui, type Locale } from '../src/i18n/ui';
 import { assertAssetExists, homeAssets } from '../src/home/assets';
 import { allowedUrlPattern, normalizeUrl } from './allowed-urls';
 import { expectLabelJoinedToIcon } from './html';
+import { readPngChunks, validatePng } from './png';
 
 const HOME_PAGES: Record<Locale, string> = {
   en: 'dist/index.html',
@@ -200,6 +202,68 @@ describe('home assets', () => {
     expect(() =>
       assertAssetExists('public/home/x.png', () => true),
     ).not.toThrow();
+  });
+});
+
+const PLACEHOLDER_PNG_SHA256 =
+  'bc04fdf1399e54a1a6b8c1e14a6fe5f60306abbb35573c930b676f9c5e937260';
+const MAX_SCREENSHOT_BYTES = 500 * 1024;
+const METADATA_CHUNK_TYPES = ['tEXt', 'iTXt', 'zTXt', 'eXIf', 'tIME'];
+const FOUR_PNGS = [
+  'public/home/data-types-en.png',
+  'public/home/data-types-pt-br.png',
+  'public/home/destination-en.png',
+  'public/home/destination-pt-br.png',
+];
+const TWO_MARKDOWN = [
+  'src/content/home/example-en.md',
+  'src/content/home/example-pt-br.md',
+];
+
+function frontmatterKeys(path: string): string[] {
+  return readFileSync(path, 'utf8')
+    .split('\n')
+    .filter((line) => /^[a-z_]+: /.test(line))
+    .map((line) => line.split(':')[0]);
+}
+
+describe('real home assets', () => {
+  it.each(FOUR_PNGS)('%s is a clean 840 x 1821 PNG under 500 KB', (path) => {
+    const png = readFileSync(path);
+    expect(() => validatePng(png, 840, 1821)).not.toThrow();
+    expect(png.length).toBeLessThanOrEqual(MAX_SCREENSHOT_BYTES);
+    const types = readPngChunks(png).chunks.map((chunk) => chunk.type);
+    for (const metadataType of METADATA_CHUNK_TYPES) {
+      expect(types).not.toContain(metadataType);
+    }
+  });
+
+  it.each(TWO_MARKDOWN)('%s is real writer output', (path) => {
+    const lines = readFileSync(path, 'utf8').trimEnd().split('\n');
+    expect(lines.length).toBeGreaterThanOrEqual(7);
+    expect(lines.length).toBeLessThanOrEqual(10);
+    expect(lines[0]).toBe('---');
+    expect(lines.at(-1)).toBe('---');
+    expect(lines.some((line) => line.startsWith('date: '))).toBe(true);
+    expect(lines.some((line) => line.startsWith('vc_schema: '))).toBe(true);
+  });
+
+  it('keeps the English example values and the same keys in Portuguese', () => {
+    const english = readFileSync(TWO_MARKDOWN[0], 'utf8');
+    expect(english).toContain('vc_resting_hr_bpm: 58.0');
+    expect(english).toContain('vc_sleep_hours: 7.40');
+    expect(frontmatterKeys(TWO_MARKDOWN[1])).toEqual(
+      frontmatterKeys(TWO_MARKDOWN[0]),
+    );
+  });
+
+  it('never ships the placeholder images', () => {
+    for (const path of FOUR_PNGS) {
+      const sha256 = createHash('sha256')
+        .update(readFileSync(path))
+        .digest('hex');
+      expect(sha256, path).not.toBe(PLACEHOLDER_PNG_SHA256);
+    }
   });
 });
 

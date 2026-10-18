@@ -7,7 +7,7 @@ Source for [vitalcourier.app](https://vitalcourier.app), the privacy policy site
 - Astro 7, built to static HTML (`build.format: 'file'`, no trailing slashes). The policy pages ship no client-side JavaScript of their own. Cloudflare Web Analytics adds its beacon script at the edge, in live responses to browsers only.
 - Both policies are Markdown files in a content collection (`src/content/privacy/`), rendered through one shared layout.
 - Tailwind CSS 4 through `@tailwindcss/vite`, with `@tailwindcss/typography` for the policy text.
-- Cloudflare Workers static assets serve `dist/`. There is no Worker script, and `public/_redirects` handles the root redirect. `public/_headers` sets the Content-Security-Policy, HSTS and the other security headers on every static response. The only script the CSP allows is the Web Analytics beacon from `static.cloudflareinsights.com`, which reports to the site's own `/cdn-cgi/rum`. Any other new external resource, such as a web font, needs its source added to the CSP or the browser blocks it.
+- Cloudflare Workers static assets serve `dist/`. There is no Worker script. `public/_headers` sets the Content-Security-Policy, HSTS and the other security headers on every static response. The only script the CSP allows is the Web Analytics beacon from `static.cloudflareinsights.com`, which reports to the site's own `/cdn-cgi/rum`. Any other new external resource, such as a web font, needs its source added to the CSP or the browser blocks it.
 - Vitest reads the built HTML in `dist/` with `node-html-parser`, without a browser.
 
 ## Prerequisites
@@ -73,11 +73,13 @@ src/
   content.config.ts  The privacy collection schema
   pages/             privacy.astro and pt-br/privacy.astro
   layouts/           Base.astro, the page shell
+  content/home/      example-en.md and example-pt-br.md, the sample daily notes shown on the home page
   components/        PolicyPage.astro
+  components/home/   The home page sections
   i18n/              ui.ts, the interface strings in both languages
   markdown/          external-links.ts, a rehype plugin that opens links in a new tab
   styles/            global.css
-public/              _redirects, _headers, favicons and the logo lockups, copied into dist/ as they are
+public/              _headers, favicons, the logo lockups and home/ (the app screenshots), copied into dist/ as they are
 tests/               Vitest suites that read the built HTML, the policy Markdown and the deploy config
 wrangler.jsonc       Cloudflare Worker config
 Dockerfile           Dev-only image for the Docker workflow
@@ -103,6 +105,7 @@ Everything in this repo is under the MIT License (see `LICENSE`), except the mat
 
 - The privacy policy text in `src/content/privacy/en.md` and `src/content/privacy/pt-br.md`.
 - The Vital Courier logos and icons: `public/circuit-lockup-dark.svg`, `public/circuit-lockup-light.svg`, `public/favicon.svg` and `public/favicon-32.png`.
+- The app screenshots: `public/home/data-types-en.png`, `public/home/data-types-pt-br.png`, `public/home/destination-en.png` and `public/home/destination-pt-br.png`.
 
 The exception covers copies of that material too, such as the policy excerpts in `tests/privacy-pages.test.ts` and the built pages and images in `dist/`. Copying or reusing any of it needs permission.
 

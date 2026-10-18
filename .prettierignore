@@ -2,3 +2,4 @@ dist
 .astro
 .wrangler
 package-lock.json
+src/content/home/example-*.md
