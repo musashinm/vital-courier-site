@@ -145,6 +145,21 @@ describe('built CSS for the home hero', () => {
     expect(outside).not.toMatch(/animation(?:-name)?:/);
   });
 
+  it('runs every hero animation with fill-mode both', () => {
+    const css = builtCss();
+    const opener = '@media (prefers-reduced-motion:no-preference){';
+    const start = css.indexOf(opener);
+    expect(start).toBeGreaterThan(-1);
+    const block = css.slice(start);
+    const animations = [...block.matchAll(/[;{]animation:([^;}]*)/g)].map(
+      ([, value]) => value,
+    );
+    expect(animations.length).toBeGreaterThanOrEqual(6);
+    for (const value of animations) {
+      expect(value, value).toMatch(/(?:^|\s)both(?:\s|$)/);
+    }
+  });
+
   it('contains the sliding headline on the x axis only', () => {
     // The minifier folds overflow-x/overflow-y into the `overflow: clip visible` shorthand.
     const clipsXOnly = /overflow(?:-x)?:clip(?: visible|;overflow-y:visible|$)/;

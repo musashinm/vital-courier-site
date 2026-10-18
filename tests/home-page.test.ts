@@ -5,7 +5,7 @@ import { ui, type Locale } from '../src/i18n/ui';
 
 const HOME_PAGES: Record<Locale, string> = {
   en: 'dist/index.html',
-  'pt-br': 'dist/pt-br/index.html',
+  'pt-br': 'dist/pt-br.html',
 };
 const CIRCUIT_ID_PREFIX: Record<Locale, string> = {
   en: 'circuit-en',
@@ -63,7 +63,7 @@ describe.skipIf(!existsSync('dist/index.html'))('home hero', () => {
       const root = parse(html);
       const prefix = CIRCUIT_ID_PREFIX[locale];
       expect(
-        required(root.querySelector('linearGradient')).getAttribute('id'),
+        required(root.querySelector('lineargradient')).getAttribute('id'),
       ).toBe(`${prefix}-gradient`);
       expect(required(root.querySelector('mask')).getAttribute('id')).toBe(
         `${prefix}-trace`,
@@ -78,6 +78,47 @@ describe.skipIf(!existsSync('dist/index.html'))('home hero', () => {
       for (const [, referencedId] of references) {
         expect(documentIds.has(referencedId), referencedId).toBe(true);
       }
+    },
+  );
+
+  it.each(locales)(
+    'wires the mask, gradient and painted paths together (%s)',
+    (locale) => {
+      const root = homeDocument(locale);
+      const prefix = CIRCUIT_ID_PREFIX[locale];
+      const gradientUrl = `url(#${prefix}-gradient)`;
+      expect(
+        required(root.querySelector('path.hero-route')).getAttribute('mask'),
+      ).toBe(`url(#${prefix}-trace)`);
+      for (const selector of ['path.hero-route', 'path.hero-destination']) {
+        expect(
+          required(root.querySelector(selector)).getAttribute('fill'),
+          selector,
+        ).toBe(gradientUrl);
+      }
+      const gradient = required(root.querySelector('lineargradient'));
+      expect(gradient.getAttribute('x1')).toBe('0');
+      expect(gradient.getAttribute('y1')).toBe('2');
+      expect(gradient.getAttribute('x2')).toBe('0');
+      expect(gradient.getAttribute('y2')).toBe('30');
+      expect(gradient.getAttribute('gradientUnits')).toBe('userSpaceOnUse');
+      const stops = gradient
+        .querySelectorAll('stop')
+        .map((stop) => [
+          stop.getAttribute('offset'),
+          stop.getAttribute('stop-color')?.toUpperCase(),
+        ]);
+      expect(stops).toEqual([
+        ['0', '#5F57D8'],
+        ['.5', '#4F46C7'],
+        ['1', '#3F37A8'],
+      ]);
+      const mask = required(root.querySelector('mask'));
+      expect(mask.getAttribute('maskUnits')).toBe('userSpaceOnUse');
+      expect(mask.getAttribute('x')).toBe('0');
+      expect(mask.getAttribute('y')).toBe('0');
+      expect(mask.getAttribute('width')).toBe('32');
+      expect(mask.getAttribute('height')).toBe('32');
     },
   );
 
