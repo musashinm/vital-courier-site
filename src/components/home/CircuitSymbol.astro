@@ -1,0 +1,63 @@
+---
+interface Props {
+  idPrefix: string;
+}
+
+const { idPrefix } = Astro.props;
+const gradientId = `${idPrefix}-gradient`;
+const traceMaskId = `${idPrefix}-trace`;
+---
+
+<svg
+  viewBox="0 0 32 32"
+  aria-hidden="true"
+  focusable="false"
+  class="hero-symbol"
+>
+  <defs>
+    <linearGradient
+      id={gradientId}
+      x1="0"
+      y1="2"
+      x2="0"
+      y2="30"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0" stop-color="#5F57D8"></stop>
+      <stop offset=".5" stop-color="#4F46C7"></stop>
+      <stop offset="1" stop-color="#3F37A8"></stop>
+    </linearGradient>
+    <mask
+      id={traceMaskId}
+      maskUnits="userSpaceOnUse"
+      maskContentUnits="userSpaceOnUse"
+      x="0"
+      y="0"
+      width="32"
+      height="32"
+    >
+      <path
+        class="hero-trace"
+        pathLength="1"
+        fill="none"
+        stroke="white"
+        stroke-width="8"
+        stroke-linecap="butt"
+        stroke-dasharray="1"
+        stroke-dashoffset="0"
+        d="M25 9 L24 8 C21.8 5.8 19 5 16 5 C9.925 5 5 9.925 5 16 C5 22.075 9.925 27 16 27 C19 27 21.8 26.2 24 24 L25 23"
+      ></path>
+    </mask>
+  </defs>
+  <path
+    class="hero-route"
+    mask={`url(#${traceMaskId})`}
+    fill={`url(#${gradientId})`}
+    d="M26 6 C23.4 3.4 19.9 2 16 2 C8.268 2 2 8.268 2 16 C2 23.732 8.268 30 16 30 C19.9 30 23.4 28.6 26 26 L22 22 C20.4 23.3 18.3 24 16 24 C11.582 24 8 20.418 8 16 C8 11.582 11.582 8 16 8 C18.3 8 20.4 8.7 22 10 Z"
+  ></path>
+  <path
+    class="hero-destination"
+    fill={`url(#${gradientId})`}
+    d="M24 13 H30 V19 H24 Z"
+  ></path>
+</svg>

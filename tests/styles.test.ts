@@ -116,6 +116,68 @@ describe('built CSS for the home page', () => {
   });
 });
 
+describe('built CSS for the home hero', () => {
+  function withoutReducedMotionBlocks(css: string): string {
+    const opener = '@media (prefers-reduced-motion:no-preference){';
+    let remainder = css;
+    let start = remainder.indexOf(opener);
+    while (start !== -1) {
+      let depth = 1;
+      let index = start + opener.length;
+      while (depth > 0 && index < remainder.length) {
+        if (remainder[index] === '{') depth += 1;
+        if (remainder[index] === '}') depth -= 1;
+        index += 1;
+      }
+      remainder = remainder.slice(0, start) + remainder.slice(index);
+      start = remainder.indexOf(opener);
+    }
+    return remainder;
+  }
+
+  it('only assigns animations inside prefers-reduced-motion: no-preference', () => {
+    const css = builtCss().replace(
+      /@media \(prefers-reduced-motion: ?no-preference\) ?\{/g,
+      '@media (prefers-reduced-motion:no-preference){',
+    );
+    expect(css).toContain('@media (prefers-reduced-motion:no-preference){');
+    const outside = withoutReducedMotionBlocks(css);
+    expect(outside).not.toMatch(/animation(?:-name)?:/);
+  });
+
+  it('contains the sliding headline on the x axis only', () => {
+    // The minifier folds overflow-x/overflow-y into the `overflow: clip visible` shorthand.
+    const clipsXOnly = /overflow(?:-x)?:clip(?: visible|;overflow-y:visible|$)/;
+    const css = builtCss();
+    const headingRules = [
+      ...css.matchAll(/([^{}]*\.hero h1)\{([^{}]*)\}/g),
+    ].map(([, selector, declarations]) => ({ selector, declarations }));
+    const containing = headingRules.filter(({ declarations }) =>
+      clipsXOnly.test(declarations),
+    );
+    expect(containing.length).toBeGreaterThanOrEqual(2);
+    for (const { selector, declarations } of headingRules) {
+      expect(declarations, selector).not.toContain('clip-path');
+    }
+    const shortViewport = css.match(
+      /@media \((?:max-height: ?560px|height<=560px)\)\{(?:[^{}]|\{[^{}]*\})*\}/,
+    );
+    expect(shortViewport?.[0]).toMatch(/\.hero h1\{[^}]*overflow:clip visible/);
+    const normalComposition = css.match(
+      /@media \((?:min-width: ?40rem|width>=40rem)\)\{(?:[^{}]|\{[^{}]*\})*\.hero h1\{[^}]*\}/,
+    );
+    expect(normalComposition?.[0]).toMatch(/\.hero h1\{[^}]*overflow:visible/);
+  });
+
+  it('makes the outer disc 106 percent of the core', () => {
+    const css = builtCss();
+    expect(css).toMatch(
+      /\.hero-halo\{[^}]*inset:calc\(0% - var\(--home-halo-overscan\)\)/,
+    );
+    expect(css).toContain('--home-halo-overscan:3%');
+  });
+});
+
 describe('built HTML and CSP', () => {
   it('sets build.inlineStylesheets to never', () => {
     expect(readFileSync('astro.config.mjs', 'utf8')).toMatch(

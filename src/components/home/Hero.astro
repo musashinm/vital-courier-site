@@ -1,0 +1,31 @@
+---
+import { ui, type Locale } from '../../i18n/ui';
+import CircuitSymbol from './CircuitSymbol.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const { headlineStart, headlineEnd, scrollCue } = ui[locale].home;
+const symbolIdPrefix = `circuit-${locale}`;
+---
+
+<section class="hero">
+  <div class="hero-visual">
+    <div class="hero-halo" aria-hidden="true"></div>
+    <div class="hero-ring-window">
+      <div class="hero-stack">
+        <CircuitSymbol idPrefix={symbolIdPrefix} />
+        <h1>
+          <span class="hero-line-start">{headlineStart}</span>
+          <span class="hero-line-end">{headlineEnd}</span>
+        </h1>
+      </div>
+    </div>
+  </div>
+  <p class="hero-cue">
+    {scrollCue}
+    <span class="hero-cue-chevron" aria-hidden="true"></span>
+  </p>
+</section>
