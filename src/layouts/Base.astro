@@ -8,21 +8,37 @@ interface Props {
   locale: Locale;
   title: string;
   page: string;
+  variant?: 'policy' | 'home';
+  description?: string;
 }
 
-const { locale, title, page } = Astro.props;
+const { locale, title, page, variant = 'policy', description } = Astro.props;
 const strings = ui[locale];
+const isHome = variant === 'home';
+const localeRootUrl = (target: Locale): string =>
+  target === 'en' ? '/' : `/${target}`;
 const absolute = (target: Locale) =>
-  new URL(getRelativeLocaleUrl(target, page), Astro.site).href;
+  new URL(
+    isHome ? localeRootUrl(target) : getRelativeLocaleUrl(target, page),
+    Astro.site,
+  ).href;
 ---
 
 <html lang={htmlLang[locale]}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content={
+        isHome
+          ? 'width=device-width, initial-scale=1, viewport-fit=cover'
+          : 'width=device-width, initial-scale=1'
+      }
+    />
     <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <title>{`${title} · ${strings.siteName}`}</title>
+    <title>{isHome ? title : `${title} · ${strings.siteName}`}</title>
+    {isHome && description && <meta name="description" content={description} />}
     <link rel="canonical" href={absolute(locale)} />
     {locales.map((target) => (
       <link
@@ -37,59 +53,72 @@ const absolute = (target: Locale) =>
     <a class="skip-link" href="#main-content">
       {strings.skipLink}
     </a>
-    <header class="site-header">
-      <div class="shell">
-        <a class="brand" href={getRelativeLocaleUrl(locale, page)}>
-          <picture>
-            <source
-              srcset="/circuit-lockup-dark.svg"
-              media="(prefers-color-scheme: dark)"
-            />
-            <img
-              class="brand-art"
-              src="/circuit-lockup-light.svg"
-              alt="Vital Courier"
-              width="191"
-              height="40"
-            />
-          </picture>
-        </a>
-        <nav class="language" aria-label={strings.languageNavLabel}>
-          {locales.map((target) =>
-            target === locale ? (
-              <span aria-current="page">
-                <abbr
-                  title={strings.languageTitles[target]}
-                  lang={htmlLang[target]}
-                >
-                  {strings.languageLabels[target]}
-                </abbr>
-              </span>
-            ) : (
-              <a
-                href={getRelativeLocaleUrl(target, page)}
-                hreflang={htmlLang[target]}
-              >
-                <abbr
-                  title={strings.languageTitles[target]}
-                  lang={htmlLang[target]}
-                >
-                  {strings.languageLabels[target]}
-                </abbr>
-              </a>
-            ),
-          )}
-        </nav>
-      </div>
-    </header>
-    <main id="main-content" class="site-main">
-      <slot />
-    </main>
-    <footer class="site-footer">
-      <div class="shell">
-        <!-- prettier-ignore -->
-        <a href={repoUrl} target="_blank" rel="noopener noreferrer">{`${strings.footerGithubLabel}\u2060`}<ExternalLinkIcon /><span class="sr-only"> {strings.opensInNewTab}</span></a>
-      </div>
-    </footer>
+    {isHome ? (
+      <>
+        <slot name="hero" />
+        <slot name="navigation" />
+        <main id="main-content" class="home-main">
+          <slot />
+        </main>
+        <slot name="footer" />
+      </>
+    ) : (
+      <>
+        <header class="site-header">
+          <div class="shell">
+            <a class="brand" href={getRelativeLocaleUrl(locale, page)}>
+              <picture>
+                <source
+                  srcset="/circuit-lockup-dark.svg"
+                  media="(prefers-color-scheme: dark)"
+                />
+                <img
+                  class="brand-art"
+                  src="/circuit-lockup-light.svg"
+                  alt="Vital Courier"
+                  width="191"
+                  height="40"
+                />
+              </picture>
+            </a>
+            <nav class="language" aria-label={strings.languageNavLabel}>
+              {locales.map((target) =>
+                target === locale ? (
+                  <span aria-current="page">
+                    <abbr
+                      title={strings.languageTitles[target]}
+                      lang={htmlLang[target]}
+                    >
+                      {strings.languageLabels[target]}
+                    </abbr>
+                  </span>
+                ) : (
+                  <a
+                    href={getRelativeLocaleUrl(target, page)}
+                    hreflang={htmlLang[target]}
+                  >
+                    <abbr
+                      title={strings.languageTitles[target]}
+                      lang={htmlLang[target]}
+                    >
+                      {strings.languageLabels[target]}
+                    </abbr>
+                  </a>
+                ),
+              )}
+            </nav>
+          </div>
+        </header>
+        <main id="main-content" class="site-main">
+          <slot />
+        </main>
+        <footer class="site-footer">
+          <div class="shell">
+            <!-- prettier-ignore -->
+            <a href={repoUrl} target="_blank" rel="noopener noreferrer">{`${strings.footerGithubLabel}\u2060`}<ExternalLinkIcon /><span class="sr-only"> {strings.opensInNewTab}</span></a>
+          </div>
+        </footer>
+      </>
+    )}
   </body>
 </html>

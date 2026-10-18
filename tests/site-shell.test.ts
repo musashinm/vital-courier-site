@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { HTMLElement, TextNode, parse } from 'node-html-parser';
 import { describe, expect, it } from 'vitest';
 
@@ -211,4 +211,97 @@ describe('Circuit lockups', () => {
       expect(sha256).toBe(approvedSha256);
     },
   );
+});
+
+function metaContent(file: string, selector: string): string | undefined {
+  const root = parse(readFileSync(file, 'utf8'));
+  return root.querySelector(selector)?.getAttribute('content');
+}
+
+describe('policy viewport', () => {
+  it.each(['dist/privacy.html', 'dist/pt-br/privacy.html'])(
+    'keeps the policy viewport meta unchanged in %s',
+    (file) => {
+      expect(metaContent(file, 'meta[name="viewport"]')).toBe(
+        'width=device-width, initial-scale=1',
+      );
+    },
+  );
+});
+
+const homePages = [
+  {
+    file: 'dist/index.html',
+    canonical: 'https://vitalcourier.app/',
+  },
+  {
+    file: 'dist/pt-br.html',
+    canonical: 'https://vitalcourier.app/pt-br',
+  },
+] as const;
+
+describe.skipIf(!existsSync('dist/index.html'))('home variant shell', () => {
+  it.each(homePages)(
+    'gives only the home variant viewport-fit=cover in $file',
+    ({ file }) => {
+      expect(metaContent(file, 'meta[name="viewport"]')).toBe(
+        'width=device-width, initial-scale=1, viewport-fit=cover',
+      );
+    },
+  );
+
+  it.each(homePages)(
+    'resolves locale roots without a trailing slash in $file',
+    ({ file, canonical }) => {
+      const root = parse(readFileSync(file, 'utf8'));
+      expect(
+        root.querySelector('link[rel="canonical"]')?.getAttribute('href'),
+      ).toBe(canonical);
+      const alternates = Object.fromEntries(
+        root
+          .querySelectorAll('link[rel="alternate"]')
+          .map((link) => [
+            link.getAttribute('hreflang'),
+            link.getAttribute('href'),
+          ]),
+      );
+      expect(alternates).toEqual({
+        en: 'https://vitalcourier.app/',
+        'pt-BR': 'https://vitalcourier.app/pt-br',
+      });
+    },
+  );
+
+  it.each(homePages)(
+    'renders hero, then navigation, then main#main-content.home-main, then footer, after the accent and skip link in $file',
+    ({ file }) => {
+      const children = childElements(body(file));
+      expect(children[0].classList.contains('site-accent')).toBe(true);
+      expect(children[1].classList.contains('skip-link')).toBe(true);
+      const mainIndex = children.findIndex(
+        (child) => child.id === 'main-content',
+      );
+      expect(children[mainIndex].tagName).toBe('MAIN');
+      expect(children[mainIndex].classList.contains('home-main')).toBe(true);
+      const heroIndex = children.findIndex((child) =>
+        child.querySelector('h1'),
+      );
+      const navigationIndex = children.findIndex((child) =>
+        child.classList.contains('home-nav'),
+      );
+      const footerIndex = children.findIndex(
+        (child) => child.tagName === 'FOOTER',
+      );
+      expect(heroIndex).toBeGreaterThan(1);
+      expect(navigationIndex).toBeGreaterThan(heroIndex);
+      expect(mainIndex).toBeGreaterThan(navigationIndex);
+      expect(footerIndex).toBeGreaterThan(mainIndex);
+    },
+  );
+
+  it.each(homePages)('has no policy header in $file', ({ file }) => {
+    const shell = body(file);
+    expect(shell.querySelector('.site-header')).toBeNull();
+    expect(shell.querySelector('.site-main')).toBeNull();
+  });
 });
