@@ -8,7 +8,7 @@ import sectionReturnLinks from './src/markdown/section-return-links.ts';
 export default defineConfig({
   site: 'https://vitalcourier.app',
   trailingSlash: 'never',
-  build: { format: 'file' },
+  build: { format: 'file', inlineStylesheets: 'never' },
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'pt-br'],
