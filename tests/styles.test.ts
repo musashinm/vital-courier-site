@@ -31,7 +31,11 @@ describe('built CSS for policy wayfinding', () => {
     expect(rule).not.toBeNull();
     expect(rule![1]).toContain('position:absolute');
     expect(rule![1]).toContain('top:0');
+    expect(rule![1]).toContain('inset-inline:0');
     expect(rule![1]).toContain('z-index:5');
+    const menuRule = builtCss().match(/\.site-menu\{([^}]*)\}/);
+    expect(menuRule).not.toBeNull();
+    expect(menuRule![1]).toContain('z-index:4');
   });
 
   it('keeps external-link icons inline despite Preflight making SVGs block', () => {
