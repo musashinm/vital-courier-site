@@ -199,15 +199,6 @@
   margin-inline: auto;
   padding-inline: 16px;
 }
-.site-header .shell {
-  display: flex;
-  min-height: 68px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding-block: 12px;
-}
 .site-main {
   width: calc(100% - 48px);
   max-width: 680px;
@@ -339,10 +330,6 @@
   .shell {
     padding-inline: 32px;
   }
-  .site-header .shell {
-    min-height: 76px;
-    padding-block: 0;
-  }
   .site-main {
     width: min(680px, calc(100% - 64px));
     padding-block: 64px 88px;
@@ -354,9 +341,6 @@
 @media (min-width: 64rem) {
   .shell {
     padding-inline: 40px;
-  }
-  .site-header .shell {
-    min-height: 84px;
   }
   .site-main {
     padding-block: 80px 112px;
@@ -450,7 +434,6 @@
 .policy-prose .policy-toc {
   padding-block: 1.25rem;
   border-block: 1px solid var(--vc-border);
-  scroll-margin-block-start: 1.5rem;
 }
 .policy-prose .policy-toc__title {
   margin: 0 0 0.75rem;
@@ -485,9 +468,6 @@
   font-size: var(--text-policy-toc-link);
   font-weight: 500;
   line-height: var(--text-policy-toc-link--line-height);
-}
-.policy-prose :where(h2) {
-  scroll-margin-block-start: 1.5rem;
 }
 .external-link-icon {
   display: inline-block;

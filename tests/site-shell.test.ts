@@ -11,6 +11,9 @@ const pages = [
     file: 'dist/privacy.html',
     ownPath: '/privacy',
     otherPath: '/pt-br/privacy',
+    homePath: '/',
+    iosHref: '/#ios-app',
+    iosText: 'iOS app',
     otherHreflang: 'pt-BR',
     currentLabel: 'EN',
     currentTitle: 'English',
@@ -28,6 +31,9 @@ const pages = [
     file: 'dist/pt-br/privacy.html',
     ownPath: '/pt-br/privacy',
     otherPath: '/privacy',
+    homePath: '/pt-br',
+    iosHref: '/pt-br#ios-app',
+    iosText: 'App para iOS',
     otherHreflang: 'en',
     currentLabel: 'PT-BR',
     currentTitle: 'Português do Brasil',
@@ -81,19 +87,30 @@ describe.each(pages)('$file shell', (page) => {
     expect(shell.querySelector('main#main-content')).not.toBeNull();
   });
 
-  it('shows the Circuit lockup in a locale-aware brand link', () => {
-    const brand = body(page.file).querySelector('header a.brand');
-    expect(brand?.getAttribute('href')).toBe(page.ownPath);
-    expect(brand?.getAttribute('aria-label')).toBeUndefined();
-    const source = brand?.querySelector('picture > source');
-    expect(source?.getAttribute('srcset')).toBe('/circuit-lockup-dark.svg');
-    expect(source?.getAttribute('media')).toBe('(prefers-color-scheme: dark)');
-    const img = brand?.querySelector('picture > img.brand-art');
-    expect(img?.getAttribute('src')).toBe('/circuit-lockup-light.svg');
-    expect(img?.getAttribute('alt')).toBe('Vital Courier');
-    expect(img?.getAttribute('width')).toBe('191');
-    expect(img?.getAttribute('height')).toBe('40');
-    expect(brand?.text.trim()).toBe('');
+  it('uses the shared site menu with home destinations', () => {
+    const shell = body(page.file);
+    expect(shell.querySelectorAll('header.site-menu')).toHaveLength(1);
+    expect(shell.querySelector('.site-header')).toBeNull();
+    const header = shell.querySelector('header.site-menu')!;
+    const navs = header.querySelectorAll('nav');
+    expect(navs).toHaveLength(2);
+    for (const nav of navs) expect(nav.querySelector('nav')).toBeNull();
+    const brand = header.querySelector('a.brand');
+    expect(brand?.getAttribute('href')).toBe(page.homePath);
+    expect(
+      brand?.querySelector('picture > img.brand-art')?.getAttribute('alt'),
+    ).toBe('Vital Courier');
+    expect(brand?.querySelectorAll('picture > source')).toHaveLength(3);
+    const ios = header.querySelector('a.site-menu__ios');
+    expect(ios?.getAttribute('href')).toBe(page.iosHref);
+    expect(ios?.text.trim()).toBe(page.iosText);
+  });
+
+  it('places the menu between the skip link and main', () => {
+    const [, , menu, main] = childElements(body(page.file));
+    expect(menu.tagName).toBe('HEADER');
+    expect(menu.classList.contains('site-menu')).toBe(true);
+    expect(main.id).toBe('main-content');
   });
 
   it('marks the current language and links the other one', () => {
@@ -169,9 +186,9 @@ describe.each(pages)('$file shell', (page) => {
 
   it('keeps the brand, language-switch and skip links in the same tab', () => {
     const sameTabLinks = body(page.file).querySelectorAll(
-      'a.skip-link, header a.brand, nav.language a',
+      'a.skip-link, header a.brand, a.site-menu__ios, nav.language a',
     );
-    expect(sameTabLinks).toHaveLength(3);
+    expect(sameTabLinks).toHaveLength(4);
     for (const link of sameTabLinks) {
       expect(link.hasAttribute('target')).toBe(false);
     }
@@ -297,7 +314,7 @@ describe('home variant shell', () => {
 
   it.each(homePages)('has no policy header in $file', ({ file }) => {
     const shell = body(file);
-    expect(shell.querySelector('.site-header')).toBeNull();
+    expect(shell.querySelectorAll('header.site-menu')).toHaveLength(1);
     expect(shell.querySelector('.site-main')).toBeNull();
   });
 });

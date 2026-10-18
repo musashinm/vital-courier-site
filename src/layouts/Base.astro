@@ -2,6 +2,7 @@
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import { htmlLang, locales, repoUrl, ui, type Locale } from '../i18n/ui';
 import ExternalLinkIcon from '../components/ExternalLinkIcon.astro';
+import SiteMenu from '../components/SiteMenu.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -64,51 +65,7 @@ const absolute = (target: Locale) =>
       </>
     ) : (
       <>
-        <header class="site-header">
-          <div class="shell">
-            <a class="brand" href={getRelativeLocaleUrl(locale, page)}>
-              <picture>
-                <source
-                  srcset="/circuit-lockup-dark.svg"
-                  media="(prefers-color-scheme: dark)"
-                />
-                <img
-                  class="brand-art"
-                  src="/circuit-lockup-light.svg"
-                  alt="Vital Courier"
-                  width="191"
-                  height="40"
-                />
-              </picture>
-            </a>
-            <nav class="language" aria-label={strings.languageNavLabel}>
-              {locales.map((target) =>
-                target === locale ? (
-                  <span aria-current="page">
-                    <abbr
-                      title={strings.languageTitles[target]}
-                      lang={htmlLang[target]}
-                    >
-                      {strings.languageLabels[target]}
-                    </abbr>
-                  </span>
-                ) : (
-                  <a
-                    href={getRelativeLocaleUrl(target, page)}
-                    hreflang={htmlLang[target]}
-                  >
-                    <abbr
-                      title={strings.languageTitles[target]}
-                      lang={htmlLang[target]}
-                    >
-                      {strings.languageLabels[target]}
-                    </abbr>
-                  </a>
-                ),
-              )}
-            </nav>
-          </div>
-        </header>
+        <SiteMenu locale={locale} pageType="policy" page={page} />
         <main id="main-content" class="site-main">
           <slot />
         </main>

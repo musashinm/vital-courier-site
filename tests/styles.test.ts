@@ -131,11 +131,19 @@ describe('built CSS for the home page', () => {
     expect(builtCss()).not.toContain('--home-phone-shadow');
   });
 
+  it('leaves no scroll-margin anywhere, so only the root offset applies', () => {
+    expect(builtCss()).not.toMatch(/scroll-margin/);
+  });
+
+  it('retires the old policy header', () => {
+    expect(builtCss()).not.toContain('.site-header');
+  });
+
   it('sets no overflow on the ancestors of the sticky menu', () => {
     const ancestorRules = [
       ...builtCss().matchAll(/([^{}]+)\{([^{}]*)\}/g),
     ].filter(([, selector]) =>
-      /\.(site-shell|home-main|home-content)(?![\w-])/.test(selector),
+      /\.(site-shell|site-main|home-main|home-content)(?![\w-])/.test(selector),
     );
     expect(ancestorRules.length).toBeGreaterThan(0);
     for (const [, selector, declarations] of ancestorRules) {
