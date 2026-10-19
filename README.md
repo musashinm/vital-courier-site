@@ -96,9 +96,11 @@ Pull requests get no preview deploys. Preview builds are turned off in the Worke
 
 `wrangler.jsonc` turns on Workers Logs and Traces at full sampling. The site has no Worker script, so static-asset requests don't invoke one and neither records anything; the privacy policy says so, and a Worker script would need that paragraph updated.
 
-## Questions about the policy
+## Contributing
 
-Open an issue. Issues are public, so don't put health information or anything private in one.
+Questions and bugs go through the issue forms. Issues are public, so don't put health information or anything private in one.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) before opening a PR. Report security problems as described in [SECURITY.md](SECURITY.md). Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 
