@@ -3,3 +3,4 @@ dist
 .wrangler
 package-lock.json
 src/content/home/example-*.md
+CODE_OF_CONDUCT.md
