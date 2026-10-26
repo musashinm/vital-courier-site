@@ -54,10 +54,12 @@ That builds the image and starts the dev server at http://localhost:4321/privacy
 - `docker compose up preview` builds `dist/` and serves it through Wrangler at http://localhost:8787, `_headers` included.
 - One-off scripts (`check`, `lint`, `format:check`, `test`) run as `docker compose run --rm web npm run <script>`, for example `docker compose run --rm web npm test`.
 - To start over from a clean install, remove the volume with `docker compose --profile preview down --volumes`. The profile flag stops `preview` too, which would otherwise keep the volume in use.
+- After a `Dockerfile` change, run `docker compose --profile preview build` once. Compose reuses the image it already built and won't pick up the change on its own.
 
 About the setup in `Dockerfile` and `compose.yaml`:
 
 - The base image is Debian (`node:24.22.1-bookworm-slim`), not Alpine, because workerd, which `npm run preview` runs on, has no musl build. It runs Node 24 to match `.nvmrc`. The digest after the tag pins the exact image, and Dependabot proposes a refreshed digest or a newer 24.x each week.
+- The image installs `ca-certificates`, which the slim base leaves out. workerd loads the system CA store when `npm run preview` starts it, and without one it exits with "No CA certificates were loaded from the system".
 - `astro dev` runs with `--ignore-lock`. Astro's lock file in `.astro/` is shared with the host through the bind mount, and the image has no `ps`, so Astro would treat any live PID in a stale lock as a running server and refuse to start. The cost is that `astro dev stop`, `status` and `logs` can't see the container's server.
 
 ## CI
