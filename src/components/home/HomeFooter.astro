@@ -13,7 +13,10 @@ const privacyUrl = locale === 'en' ? '/privacy' : `/${locale}/privacy`;
 ---
 
 <footer class="home-footer">
-  <p>{footer.context}</p>
+  <div class="home-footer__text">
+    <p>{footer.context}</p>
+    <p>{footer.credit}</p>
+  </div>
   <ul>
     <li>
       <a href={privacyUrl}>{footer.privacy}</a>

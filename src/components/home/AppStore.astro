@@ -3,7 +3,7 @@ import { ui, type Locale } from '../../i18n/ui';
 
 interface Props {
   locale: Locale;
-  url: string | null;
+  url: string;
 }
 
 const { locale, url } = Astro.props;
@@ -14,21 +14,17 @@ const { appStore } = ui[locale].home;
   <div class="app-store__panel">
     <div>
       <div class="home-eyebrow">{appStore.eyebrow}</div>
-      <h2 class="home-h2">
-        {url === null ? appStore.preHeading : appStore.liveHeading}
-      </h2>
+      <h2 class="home-h2">{appStore.liveHeading}</h2>
     </div>
     <div>
-      <p>{url === null ? appStore.preBody : appStore.liveBody}</p>
-      {url !== null && (
-        <a class="app-store__badge" href={url} aria-label={appStore.badgeLabel}>
-          <img
-            src={`/app-store/download-${locale}-black.svg`}
-            height="56"
-            alt=""
-          />
-        </a>
-      )}
+      <p>{appStore.liveBody}</p>
+      <a class="app-store__badge" href={url} aria-label={appStore.badgeLabel}>
+        <img
+          src={`/app-store/download-${locale}-black.svg`}
+          height="56"
+          alt=""
+        />
+      </a>
     </div>
   </div>
 </section>

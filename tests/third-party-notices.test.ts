@@ -10,6 +10,12 @@ describe('third-party notices', () => {
     expect(notices).toContain('external-link');
   });
 
+  it('credits the Apple App Store badges and the Apple trademarks', () => {
+    const notices = readFileSync('THIRD_PARTY_NOTICES.md', 'utf8');
+    expect(notices).toContain('Apple App Store badges');
+    expect(notices).toContain('trademarks of Apple Inc.');
+  });
+
   it('points to the notices from the README license section', () => {
     expect(readFileSync('README.md', 'utf8')).toContain(
       '[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)',

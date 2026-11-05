@@ -82,7 +82,7 @@ src/
   i18n/              ui.ts, the interface strings in both languages
   markdown/          external-links.ts, a rehype plugin that opens links in a new tab
   styles/            global.css
-public/              _headers, favicons, the logo lockups and home/ (the app screenshots), copied into dist/ as they are
+public/              _headers, favicons, the logo lockups and home/ (the app screenshots) and app-store/ (Apple's App Store badges), copied into dist/ as they are
 tests/               Vitest suites that read the built HTML, the policy Markdown and the deploy config
 wrangler.jsonc       Cloudflare Worker config
 Dockerfile           Dev-only image for the Docker workflow
@@ -113,5 +113,7 @@ Everything in this repo is under the MIT License (see `LICENSE`), except the mat
 - The app screenshots: `public/home/data-types-en.png`, `public/home/data-types-pt-br.png`, `public/home/destination-en.png` and `public/home/destination-pt-br.png`.
 
 The exception covers copies of that material too, such as the policy excerpts in `tests/privacy-pages.test.ts` and the built pages and images in `dist/`. Copying or reusing any of it needs permission.
+
+The App Store badges in `public/app-store/` are Apple artwork, used under Apple's App Store Marketing Artwork License Agreement. They aren't under the MIT License and they aren't Kleber Kihara's. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 The external-link icon comes from Lucide and, before that, Feather, so it's covered by Lucide's ISC License and Feather's MIT License. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

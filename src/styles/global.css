@@ -835,9 +835,15 @@ html:has(.site-menu) {
   font-size: var(--text-policy-meta);
   line-height: var(--text-policy-meta--line-height);
 }
-.home-footer p {
-  margin: 0 0 18px;
+.home-footer__text {
+  margin-bottom: 18px;
   color: var(--vc-text-muted);
+}
+.home-footer__text p {
+  margin: 0;
+}
+.home-footer__text p + p {
+  margin-top: 8px;
 }
 .home-footer ul {
   display: flex;
@@ -1032,10 +1038,14 @@ html:has(.site-menu) {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 32px;
     padding: 40px;
   }
-  .home-footer p {
-    margin: 0;
+  .home-footer__text {
+    margin-bottom: 0;
+  }
+  .home-footer ul {
+    flex-shrink: 0;
   }
 }
 

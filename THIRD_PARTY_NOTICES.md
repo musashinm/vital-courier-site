@@ -47,3 +47,9 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Apple App Store badges
+
+Used in `public/app-store/download-en-black.svg` and `public/app-store/download-pt-br-black.svg`. The artwork belongs to Apple and is used unmodified under Apple's [App Store Marketing Artwork License Agreement](https://developer.apple.com/app-store/marketing/guidelines/). The repo's MIT License doesn't cover it.
+
+Apple, the Apple logo and App Store are trademarks of Apple Inc.
