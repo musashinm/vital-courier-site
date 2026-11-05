@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { appStoreUrl, ui, type Locale } from '../../i18n/ui';
+import { appStoreUrls, ui, type Locale } from '../../i18n/ui';
 import SiteMenu from '../SiteMenu.astro';
 import AppStore from './AppStore.astro';
 import Hero from './Hero.astro';
@@ -31,7 +31,7 @@ const { title, metaDescription } = ui[locale].home;
   </Fragment>
   <Screens locale={locale} />
   <Philosophy locale={locale} />
-  <AppStore locale={locale} url={appStoreUrl} />
+  <AppStore locale={locale} url={appStoreUrls[locale]} />
   <Fragment slot="footer">
     <HomeFooter locale={locale} />
   </Fragment>

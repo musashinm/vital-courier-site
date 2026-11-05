@@ -30,8 +30,6 @@ export interface HomeStrings {
   };
   appStore: {
     eyebrow: string;
-    preHeading: string;
-    preBody: string;
     liveHeading: string;
     liveBody: string;
     badgeLabel: string;
@@ -40,6 +38,7 @@ export interface HomeStrings {
     privacy: string;
     source: string;
     context: string;
+    credit: string;
   };
 }
 
@@ -93,7 +92,7 @@ export const ui: Record<
       headlineEnd: 'Where you want it.',
       scrollCue: 'Scroll',
       mainNavLabel: 'Main',
-      iosAppLink: 'iOS app',
+      iosAppLink: 'iPhone app',
       screens: {
         eyebrow: 'Your data, in motion',
         heading: 'From Health to a folder you control.',
@@ -138,10 +137,7 @@ export const ui: Record<
         sourceLink: 'Read the source on GitHub',
       },
       appStore: {
-        eyebrow: 'iOS app',
-        preHeading: 'Coming soon to the App Store.',
-        preBody:
-          'Vital Courier is in review. The app will be free when it is available.',
+        eyebrow: 'iPhone app',
         liveHeading: 'Take your data with you.',
         liveBody: 'Free on the App Store for iPhone.',
         badgeLabel: 'Download Vital Courier on the App Store',
@@ -150,6 +146,8 @@ export const ui: Record<
         privacy: 'Privacy Policy',
         source: 'Source code',
         context: 'Vital Courier sends your health data nowhere.',
+        credit:
+          'Apple, the Apple logo, App Store, Apple Health, Apple Watch, iCloud, iCloud Drive and iPhone are trademarks of Apple Inc.',
       },
     },
   },
@@ -174,7 +172,7 @@ export const ui: Record<
       headlineEnd: 'Onde você quiser.',
       scrollCue: 'Role para continuar',
       mainNavLabel: 'Principal',
-      iosAppLink: 'App para iOS',
+      iosAppLink: 'App para iPhone',
       screens: {
         eyebrow: 'Seus dados em movimento',
         heading: 'Do app Saúde para uma pasta sob seu controle.',
@@ -219,10 +217,7 @@ export const ui: Record<
         sourceLink: 'Ver o código-fonte no GitHub',
       },
       appStore: {
-        eyebrow: 'App para iOS',
-        preHeading: 'Em breve na App Store.',
-        preBody:
-          'O Vital Courier está em análise. O app será grátis quando estiver disponível.',
+        eyebrow: 'App para iPhone',
         liveHeading: 'Leve seus dados com você.',
         liveBody: 'Grátis na App Store para iPhone.',
         badgeLabel: 'Baixar o Vital Courier na App Store',
@@ -232,13 +227,18 @@ export const ui: Record<
         source: 'Código-fonte',
         context:
           'O Vital Courier não envia seus dados de saúde a lugar nenhum.',
+        credit:
+          'Apple, o logotipo da Apple, App Store, Apple Watch, iCloud, iCloud Drive e iPhone são marcas comerciais da Apple Inc.',
       },
     },
   },
 };
 
 export const appRepoUrl = 'https://github.com/musashinm/vital-courier-app';
-export const appStoreUrl: string | null = null;
+export const appStoreUrls: Record<Locale, string> = {
+  en: 'https://apps.apple.com/us/app/vital-courier/id6822065869',
+  'pt-br': 'https://apps.apple.com/br/app/vital-courier/id6822065869',
+};
 
 export const repoUrl = 'https://github.com/musashinm/vital-courier-site';
 

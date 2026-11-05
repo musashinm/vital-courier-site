@@ -1,8 +1,8 @@
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { parse, type HTMLElement } from 'node-html-parser';
-import { appRepoUrl, ui, type Locale } from '../src/i18n/ui';
+import { appRepoUrl, appStoreUrls, ui, type Locale } from '../src/i18n/ui';
 import { assertAssetExists, homeAssets } from '../src/home/assets';
 import { allowedUrlPattern, normalizeUrl } from './allowed-urls';
 import { expectLabelJoinedToIcon } from './html';
@@ -169,7 +169,7 @@ const PAGE_EXPECTATIONS = [
     otherHref: '/pt-br',
     privacyHref: '/privacy',
     navLabels: ['Main', 'Language'],
-    iosText: 'iOS app',
+    iosText: 'iPhone app',
     newTabWarning: ' (opens in a new tab)',
   },
   {
@@ -180,7 +180,7 @@ const PAGE_EXPECTATIONS = [
     otherHref: '/',
     privacyHref: '/pt-br/privacy',
     navLabels: ['Principal', 'Idioma'],
-    iosText: 'App para iOS',
+    iosText: 'App para iPhone',
     newTabWarning: ' (abre em uma nova aba)',
   },
 ] as const;
@@ -301,6 +301,7 @@ describe.each(PAGE_EXPECTATIONS)('$file home page', (page) => {
       '#ios-app',
       page.otherHref,
       appRepoUrl,
+      appStoreUrls[page.locale],
       page.privacyHref,
       appRepoUrl,
     ]);
@@ -455,18 +456,39 @@ describe.each(PAGE_EXPECTATIONS)('$file home page', (page) => {
     expect(
       required(footer.querySelector('a[href^="/"]')).getAttribute('href'),
     ).toBe(page.privacyHref);
-    expect(required(footer.querySelector('p')).text).toBe(
-      strings.footer.context,
+    const children = footer.childNodes.filter(
+      (node): node is HTMLElement => 'tagName' in node,
     );
+    expect(children.map((child) => child.tagName.toLowerCase())).toEqual([
+      'div',
+      'ul',
+    ]);
+    expect(children[0].classList.contains('home-footer__text')).toBe(true);
+    expect(
+      children[0].querySelectorAll('p').map((paragraph) => paragraph.text),
+    ).toEqual([strings.footer.context, strings.footer.credit]);
   });
 
-  it('shows the pre-approval App Store panel with no control', () => {
+  it('shows the live App Store panel with only the badge link', () => {
     const section = required(root().querySelector('#ios-app'));
-    for (const selector of ['a', 'img', 'button']) {
-      expect(section.querySelector(selector)).toBeNull();
-    }
-    expect(section.text).toContain(strings.appStore.preHeading);
-    expect(section.text).toContain(strings.appStore.preBody);
+    expect(section.text).toContain(strings.appStore.liveHeading);
+    expect(section.text).toContain(strings.appStore.liveBody);
+    expect(section.text).not.toContain('Em breve');
+    expect(section.text).not.toContain('Coming soon');
+    expect(section.querySelectorAll('a')).toHaveLength(1);
+    expect(section.querySelector('button')).toBeNull();
+    const link = required(section.querySelector('a'));
+    expect(link.getAttribute('href')).toBe(appStoreUrls[page.locale]);
+    expect(link.getAttribute('aria-label')).toBe(strings.appStore.badgeLabel);
+    expect(link.getAttribute('target')).toBeUndefined();
+    expect(link.getAttribute('rel')).toBeUndefined();
+    expect(link.childNodes.filter((node) => 'tagName' in node)).toHaveLength(1);
+    const image = required(link.querySelector('img'));
+    const src = `/app-store/download-${page.locale}-black.svg`;
+    expect(image.getAttribute('alt')).toBe('');
+    expect(image.getAttribute('src')).toBe(src);
+    expect(existsSync(`public${src}`)).toBe(true);
+    expect(existsSync(`dist${src}`)).toBe(true);
   });
 
   it('has nothing for the CSP to block', () => {
