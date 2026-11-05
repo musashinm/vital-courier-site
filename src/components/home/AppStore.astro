@@ -18,7 +18,13 @@ const { appStore } = ui[locale].home;
     </div>
     <div>
       <p>{appStore.liveBody}</p>
-      <a class="app-store__badge" href={url} aria-label={appStore.badgeLabel}>
+      <a
+        class="app-store__badge"
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${appStore.badgeLabel} ${ui[locale].opensInNewTab}`}
+      >
         <img
           src={`/app-store/download-${locale}-black.svg`}
           height="56"
