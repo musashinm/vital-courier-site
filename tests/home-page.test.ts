@@ -479,9 +479,11 @@ describe.each(PAGE_EXPECTATIONS)('$file home page', (page) => {
     expect(section.querySelector('button')).toBeNull();
     const link = required(section.querySelector('a'));
     expect(link.getAttribute('href')).toBe(appStoreUrls[page.locale]);
-    expect(link.getAttribute('aria-label')).toBe(strings.appStore.badgeLabel);
-    expect(link.getAttribute('target')).toBeUndefined();
-    expect(link.getAttribute('rel')).toBeUndefined();
+    expect(link.getAttribute('aria-label')).toBe(
+      `${strings.appStore.badgeLabel} ${ui[page.locale].opensInNewTab}`,
+    );
+    expect(link.getAttribute('target')).toBe('_blank');
+    expect(link.getAttribute('rel')).toBe('noopener noreferrer');
     expect(link.childNodes.filter((node) => 'tagName' in node)).toHaveLength(1);
     const image = required(link.querySelector('img'));
     const src = `/app-store/download-${page.locale}-black.svg`;
