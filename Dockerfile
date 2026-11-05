@@ -4,8 +4,9 @@
 # The base must be glibc, not Alpine: workerd (behind `npm run preview`) ships
 # no musl build, so npm installs the glibc binary on Alpine and it then fails
 # at exec. The image runs Node 24 to match .nvmrc. The digest pins the exact
-# multi-arch image, and Dependabot refreshes it weekly.
-FROM node:24.22.1-bookworm-slim@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205
+# multi-arch image. Dependabot checks it weekly but hasn't opened a PR for it
+# so far, so bump it by hand when a Node CVE matters.
+FROM node:24.22.1-bookworm-slim@sha256:be8204d4bd327363357f532187b752ff62759c31bedf98e9e18fc08c9cbd605c
 
 # workerd (behind `npm run preview`) loads the system CA store at startup and
 # exits with "No CA certificates were loaded from the system" when it's empty.
