@@ -1,6 +1,6 @@
 ---
 title: Privacy Policy
-updated: 2026-10-17
+updated: 2026-11-15
 ---
 
 Vital Courier exports your Apple Health data to a folder you choose. It has no account and no server, and it sends nothing to its developer or to anyone else.
@@ -65,7 +65,7 @@ To stop exports to a folder, pick a different folder in Vital Courier. If you de
 
 ## Tips
 
-Tips are optional and go through Apple's In-App Purchase. Vital Courier receives no information about the person who tips. The app keeps only a note on your iPhone that you tipped, so it can show a thank-you.
+Tips are optional and go through Apple's In-App Purchase. Vital Courier receives no information about the person who tips. The app keeps only a note on your iPhone that you tipped, so it can show a thank-you. After a reinstall, the app checks your App Store purchase history for an earlier tip and, if it finds one, sets the same note again. Restore an earlier tip in Vital Courier's Settings first asks the App Store to sync that history, then checks again. The app stores nothing else and sends nothing to the developer.
 
 ## What is never collected
 

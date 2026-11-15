@@ -1,6 +1,6 @@
 ---
 title: Política de Privacidade
-updated: 2026-10-17
+updated: 2026-11-15
 ---
 
 O Vital Courier exporta seus dados do Apple Saúde para uma pasta que você escolhe. Ele não tem conta nem servidor, e não envia nada ao desenvolvedor nem a mais ninguém.
@@ -65,7 +65,7 @@ Para parar as exportações para uma pasta, escolha outra pasta no Vital Courier
 
 ## Contribuições
 
-As contribuições são opcionais e passam pela compra dentro do app da Apple (In-App Purchase). O Vital Courier não recebe nenhuma informação sobre quem contribui. O aplicativo guarda só uma anotação no seu iPhone de que você contribuiu, para mostrar um agradecimento.
+As contribuições são opcionais e passam pela compra dentro do app da Apple (In-App Purchase). O Vital Courier não recebe nenhuma informação sobre quem contribui. O aplicativo guarda só uma anotação no seu iPhone de que você contribuiu, para mostrar um agradecimento. Depois de uma reinstalação, o aplicativo consulta seu histórico de compras da App Store em busca de uma contribuição anterior e, se encontrar uma, grava a mesma anotação de novo. Restaurar contribuição anterior, nos Ajustes do aplicativo, primeiro pede à App Store para sincronizar esse histórico e depois consulta de novo. O aplicativo não guarda mais nada e não envia nada ao desenvolvedor.
 
 ## O que nunca é coletado
 
