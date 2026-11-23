@@ -6,7 +6,7 @@
 # at exec. The image runs Node 24 to match .nvmrc. The digest pins the exact
 # multi-arch image. Dependabot checks it weekly but hasn't opened a PR for it
 # so far, so bump it by hand when a Node CVE matters.
-FROM node:24.22.2-bookworm-slim@sha256:01d566e8d94d8c619591d78652babfccd3c6992a3dffa9ed5ab39e11cf6c70e9
+FROM node:24.22.3-bookworm-slim@sha256:dc26ae92c9fb15cf6b1d63e20f0944b2efe0f115b20e00be48fb23fceb061c54
 
 # workerd (behind `npm run preview`) loads the system CA store at startup and
 # exits with "No CA certificates were loaded from the system" when it's empty.
