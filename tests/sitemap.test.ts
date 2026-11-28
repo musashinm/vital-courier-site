@@ -21,12 +21,17 @@ function builtHtmlFiles(): string[] {
 }
 
 function linksFromPage(file: string): PageLinks {
-  const document = parse(readFileSync(file, 'utf8'));
-  const canonical = document
-    .querySelector('link[rel="canonical"]')
-    ?.getAttribute('href');
+  const head = parse(readFileSync(file, 'utf8')).querySelector('head');
+  if (!head) throw new Error(`${file} has no <head>`);
+  const canonicalLinks = head.querySelectorAll('link[rel="canonical"]');
+  if (canonicalLinks.length !== 1) {
+    throw new Error(
+      `${file} has ${canonicalLinks.length} canonical links in <head>, expected 1`,
+    );
+  }
+  const canonical = canonicalLinks[0].getAttribute('href');
   if (!canonical) throw new Error(`${file} has no canonical link`);
-  const alternates = document
+  const alternates = head
     .querySelectorAll('link[rel="alternate"][hreflang]')
     .map((link) => [
       link.getAttribute('hreflang') ?? '',
