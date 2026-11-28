@@ -8,6 +8,7 @@ Source for [vitalcourier.app](https://vitalcourier.app), the site for the Vital 
 - Both policies are Markdown files in a content collection (`src/content/privacy/`), rendered through one shared layout.
 - Tailwind CSS 4 through `@tailwindcss/vite`, with `@tailwindcss/typography` for the policy text.
 - Cloudflare Workers static assets serve `dist/`. There is no Worker script. `public/_headers` sets the Content-Security-Policy, HSTS and the other security headers on every static response. The only script the CSP allows is the Web Analytics beacon from `static.cloudflareinsights.com`, which reports to the site's own `/cdn-cgi/rum`. Any other new external resource, such as a web font, needs its source added to the CSP or the browser blocks it.
+- `public/robots.txt` allows all crawlers, sets the Content Signal (`search=yes, ai-input=yes, ai-train=no`) and names `/sitemap.xml`. `src/pages/sitemap.xml.ts` builds the sitemap from the locales in `src/i18n/ui.ts`. A new page has to be added to its `sitemapPages` list, or `tests/sitemap.test.ts` fails. Cloudflare serves the origin `robots.txt` unchanged while Bot Preference Sync is off.
 - The site supports the browsers [Tailwind CSS 4 supports](https://tailwindcss.com/docs/compatibility): Safari and iOS 16.4+, Chrome 111+ and Firefox 128+. The built CSS and the header's `<picture>` media queries rely on Media Queries Level 4 syntax.
 - Vitest reads the built HTML in `dist/` with `node-html-parser`, without a browser.
 
@@ -74,7 +75,7 @@ About the setup in `Dockerfile` and `compose.yaml`:
 src/
   content/privacy/   en.md and pt-br.md, the policy text. Changing the text means moving its `updated:` date.
   content.config.ts  The privacy collection schema
-  pages/             index.astro and pt-br/index.astro (the home page), privacy.astro and pt-br/privacy.astro
+  pages/             index.astro and pt-br/index.astro (the home page), privacy.astro and pt-br/privacy.astro, and sitemap.xml.ts (builds /sitemap.xml)
   layouts/           Base.astro, the page shell
   content/home/      example-en.md and example-pt-br.md, the sample daily notes shown on the home page
   components/        PolicyPage.astro and SiteMenu.astro, the sticky menu both page types share
@@ -82,7 +83,7 @@ src/
   i18n/              ui.ts, the interface strings in both languages
   markdown/          external-links.ts, a rehype plugin that opens links in a new tab
   styles/            global.css
-public/              _headers, favicons, the logo lockups and home/ (the app screenshots) and app-store/ (Apple's App Store badges), copied into dist/ as they are
+public/              _headers, robots.txt, favicons, the logo lockups and home/ (the app screenshots) and app-store/ (Apple's App Store badges), copied into dist/ as they are
 tests/               Vitest suites that read the built HTML, the policy Markdown and the deploy config
 wrangler.jsonc       Cloudflare Worker config
 Dockerfile           Dev-only image for the Docker workflow
